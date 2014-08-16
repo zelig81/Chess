@@ -4,7 +4,7 @@
 package project.ilyagorban;
 
 /**
- * @author zelig
+ * @author ilya gorban
  *
  */
 public class Main {
