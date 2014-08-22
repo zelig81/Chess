@@ -1,0 +1,16 @@
+package project.ilyagorban.model;
+
+public enum Coordinates {
+	A(0), B(1),C(2),D(3),E(4),F(5),G(6),H(7);
+	
+	private int coordinate;
+
+	private Coordinates(int coordinate) {
+		this.coordinate = coordinate;
+	}
+
+	public int getCoordinate() {
+		return coordinate;
+	}
+
+}
