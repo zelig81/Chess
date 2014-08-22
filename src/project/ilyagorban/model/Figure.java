@@ -9,31 +9,30 @@ package project.ilyagorban.model;
  */
 public abstract class Figure {
 	public abstract void move();
-	protected CoordX coordX;
-	protected int y;
+	protected XY xy;
 	protected Rank rank;
 	
-	public Figure(int x, int y, Rank r){
-		this.coordX = CoordX.getCoordX(x);
-		this.y = y;
+	public Figure(XY xy, Rank r){
+		this.xy = xy;
 		this.rank = r;
 	}
 	
-	public CoordX getCoordX() {
-		return coordX;
+	public XY getXY() {
+		return xy;
 	}
 	
-	public int getX(){
-		return coordX.getX();
+	public void setXY(XY xy){
+		this.xy = xy;
 	}
 	
-	public void setX(int x) {
-		this.coordX = CoordX.getCoordX(x);
-	}
 	public Rank getRank() {
 		return rank;
 	}
 	
 	public abstract void removeFigure();
+	
+	public String toString(){
+		return rank.getPicture();
+	}
 	
 }

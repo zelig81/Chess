@@ -2,8 +2,8 @@ package project.ilyagorban.model;
 
 public class Bishop extends Figure {
 
-	public Bishop(int x, int y, Rank r) {
-		super(x, y, r);
+	public Bishop(XY p, Rank r) {
+		super(p, r);
 	}
 
 	@Override

@@ -3,8 +3,8 @@ package project.ilyagorban.model;
 public class Knight extends Figure {
 
 
-	public Knight(int x, int y, Rank r) {
-		super(x, y, r);
+	public Knight(XY p, Rank r) {
+		super(p, r);
 	}
 
 	@Override

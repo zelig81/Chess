@@ -2,8 +2,8 @@ package project.ilyagorban.model;
 
 public class Queen extends Figure {
 
-	public Queen(int x, int y, Rank r) {
-		super(x, y, r);
+	public Queen(XY p, Rank r) {
+		super(p, r);
 	}
 
 	@Override

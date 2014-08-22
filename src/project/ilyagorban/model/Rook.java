@@ -2,8 +2,8 @@ package project.ilyagorban.model;
 
 public class Rook extends Figure {
 
-	public Rook(int x, int y, Rank r) {
-		super(x, y, r);
+	public Rook(XY p, Rank r) {
+		super(p, r);
 	}
 
 	@Override

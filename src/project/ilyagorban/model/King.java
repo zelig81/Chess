@@ -3,8 +3,8 @@ package project.ilyagorban.model;
 public class King extends Figure {
 
 
-	public King(int x, int y, Rank r) {
-		super(x, y, r);
+	public King(XY p, Rank r) {
+		super(p, r);
 	}
 
 	@Override

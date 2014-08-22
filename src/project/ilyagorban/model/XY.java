@@ -1,0 +1,43 @@
+package project.ilyagorban.model;
+
+public class XY {
+	CoordX cX;
+	int y;
+	
+	public XY (int x, int y){
+		setXY(x,y);
+	}
+	
+	public XY(String xy){ //e2-e4
+		//TODO check rightness of xy
+		setXY(xy);
+		
+	}
+	
+	public int getX (){
+		return cX.getX();
+	}
+	
+	public String getXName(){
+		return cX.toString();
+	}
+	
+	public int getY(){
+		return y;
+	}
+	
+	public String getYName(){
+		return String.valueOf(y+1);
+	}
+	
+	public void setXY(int x, int y){
+		this.cX = CoordX.getCoordX(x);
+		this.y = y;
+	}
+	
+	public void setXY(String xy){
+		this.cX = CoordX.getCoordX(xy.charAt(1));
+		this.y = (int) Integer.parseInt(String.valueOf(xy.charAt(0)))- 1;
+	}
+
+}

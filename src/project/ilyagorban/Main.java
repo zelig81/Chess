@@ -16,7 +16,7 @@ public class Main {
 		ChessModel cm = new ChessModel();
 		ChessView cv = new ChessView();
 		ChessController cc = new ChessController(cm, cv);
-
+		cc.start();
 	}
 
 }

@@ -2,8 +2,8 @@ package project.ilyagorban.model;
 
 public class Pawn extends Figure {
 	
-	public Pawn(int x, int y, Rank r) {
-		super(x, y, r);
+	public Pawn(XY p, Rank r) {
+		super(p, r);
 	}
 
 	public void setRank(Rank rank){
