@@ -1,5 +1,6 @@
 package project.ilyagorban.model;
 
+// ♚♔ figures
 public class King extends Figure {
 
 
@@ -14,8 +15,21 @@ public class King extends Figure {
 	}
 
 	@Override
-	public void removeFigure() {
-		// TODO Auto-generated method stub
+	protected boolean checkMoveCorrectness(XY from, XY to) {
+		int stepsX = Math.abs(to.getX() -  from.getX());
+		int stepsY = Math.abs(to.getY() - from.getY() );
+		return (stepsX <=1 && stepsY <=1);
+	}
+
+	@Override
+	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
+		Figure endPointFigure = board[to.getX()][to.getY()];
+		return (endPointFigure == null || endPointFigure.getRank().getOwner() != this.getRank().getOwner());
+	}
+
+	@Override
+	public Owner checkKingRemove() {
+		return this.getRank().getOwner();
 		
 	}
 

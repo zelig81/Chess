@@ -1,5 +1,6 @@
 package project.ilyagorban.model;
 
+// ♛♕ figures
 public class Queen extends Figure {
 
 	public Queen(XY p, Rank r) {
@@ -13,9 +14,15 @@ public class Queen extends Figure {
 	}
 
 	@Override
-	public void removeFigure() {
+	protected boolean checkMoveCorrectness(XY from, XY to) {
 		// TODO Auto-generated method stub
-		
+		return false;
+	}
+
+	@Override
+	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

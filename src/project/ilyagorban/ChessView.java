@@ -2,11 +2,12 @@ package project.ilyagorban;
 
 import java.util.Scanner;
 
-import project.ilyagorban.model.CoordX;
 import project.ilyagorban.model.Figure;
+import project.ilyagorban.model.Owner;
 
 public class ChessView {
 	
+	private Scanner sc = new Scanner(System.in);
 	public ChessView (){
 		this("console");
 	}
@@ -24,8 +25,9 @@ public class ChessView {
 		}
 	}
 
-	public String showBoard(Figure[][] figures) {
-		System.out.println("  a  b  c  d  e  f  g  h");
+	public String showBoard(Figure[][] figures, Owner currentOwner) {
+		System.out.println("---------------------------------------");
+		System.out.println("  a  b  c d  e  f  g  h");
 		for(int y = 7; y >= 0; y--){
 			System.out.print(y + 1);
 			for (int x = 7; x >= 0; x--){
@@ -33,14 +35,19 @@ public class ChessView {
 					System.out.print(figures[x][y]);
 				}
 				else{
-					System.out.print("\u2680");
+					System.out.print(((x+y)% 2 ==1)? "\u25a0" : "\u25a1" );
 				}
 			}
 			System.out.print("\n");
 		}
-		System.out.println("move your figure:");
-		String input = (new Scanner(System.in)).nextLine();
+		System.out.println(currentOwner + " your move (for example [e2 e4]) to enter [exit] to quit the game:");
+		String input = sc.nextLine();
 		return input;
+	}
+
+	public void message(String string) {
+		System.out.println(string);
+		
 	}
 
 }

@@ -1,7 +1,7 @@
 package project.ilyagorban.model;
 
+// ♘♞ figures
 public class Knight extends Figure {
-
 
 	public Knight(XY p, Rank r) {
 		super(p, r);
@@ -14,9 +14,15 @@ public class Knight extends Figure {
 	}
 
 	@Override
-	public void removeFigure() {
+	protected boolean checkMoveCorrectness(XY from, XY to) {
 		// TODO Auto-generated method stub
-		
+		return false;
+	}
+
+	@Override
+	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

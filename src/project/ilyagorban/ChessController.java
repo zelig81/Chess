@@ -15,10 +15,27 @@ public class ChessController {
 	public void start(){
 		cm.initializeGame();
 		Owner currentOwner = Owner.WHITE;
-		while(true){
-			String input = cv.showBoard(cm.getBoard());
-			cm.move(input, currentOwner);
-			currentOwner = Owner.changeOwner(currentOwner);
+		cycle: while(true){
+			String input = cv.showBoard(cm.getBoard(), currentOwner);
+			if ("exit".equals(input))
+				break;
+			switch (cm.move(input, currentOwner)){
+			case "done":
+				currentOwner = Owner.changeOwner(currentOwner);
+				break;
+			case "incorrect input":
+				cv.message("incorrect input");
+				break;
+			case "no owner's figure":
+				cv.message("no owner's figure");
+				break;
+			case "incorrect move":
+				cv.message("incorrect move");
+				break;
+			case "king removing":
+				cv.message(currentOwner + " wins!!!!!");
+				break cycle;
+			}
 		}
 	}
 

@@ -1,15 +1,14 @@
 package project.ilyagorban.model;
 
-public class XY {
-	CoordX cX;
-	int y;
+public class XY{
+	private CoordX cX;
+	private int y;
 	
 	public XY (int x, int y){
 		setXY(x,y);
 	}
 	
-	public XY(String xy){ //e2-e4
-		//TODO check rightness of xy
+	public XY(String xy){ //[e2 e4]
 		setXY(xy);
 		
 	}
@@ -36,8 +35,8 @@ public class XY {
 	}
 	
 	public void setXY(String xy){
-		this.cX = CoordX.getCoordX(xy.charAt(1));
-		this.y = (int) Integer.parseInt(String.valueOf(xy.charAt(0)))- 1;
+		this.cX = CoordX.getCoordX(xy.charAt(0));
+		this.y = (int) Integer.parseInt(String.valueOf(xy.charAt(1)))- 1;
 	}
 
 }

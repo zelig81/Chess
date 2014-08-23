@@ -1,5 +1,6 @@
 package project.ilyagorban.model;
 
+// ♙♟ figures
 public class Pawn extends Figure {
 	
 	public Pawn(XY p, Rank r) {
@@ -8,7 +9,6 @@ public class Pawn extends Figure {
 
 	public void setRank(Rank rank){
 		super.rank = rank;
-		//TODO add check owner
 	}
 
 
@@ -20,9 +20,15 @@ public class Pawn extends Figure {
 
 
 	@Override
-	public void removeFigure() {
+	protected boolean checkMoveCorrectness(XY from, XY to) {
 		// TODO Auto-generated method stub
-		
+		return true;
+	}
+
+	@Override
+	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }

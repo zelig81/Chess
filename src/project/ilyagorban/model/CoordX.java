@@ -22,7 +22,7 @@ public enum CoordX {
 	}
 	
 	public static CoordX getCoordX(char x){
-		return CoordX.valueOf(String.valueOf(x));
+		return CoordX.valueOf(String.valueOf(x).toUpperCase());
 	}
 	
 	public String toString(){
