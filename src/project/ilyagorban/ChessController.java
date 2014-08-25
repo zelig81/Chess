@@ -24,16 +24,16 @@ public class ChessController {
 				currentOwner = Owner.changeOwner(currentOwner);
 				break;
 			case "incorrect input":
-				cv.message("incorrect input");
+				cv.setMessage("incorrect input string");
 				break;
-			case "no owner's figure":
-				cv.message("no owner's figure");
+			case "there is not owner's figure":
+				cv.setMessage("no owner's figure");
 				break;
-			case "incorrect move":
-				cv.message("incorrect move");
+			case "incorrect move for this figure":
+				cv.setMessage("incorrect move for this figure");
 				break;
 			case "king removing":
-				cv.message(currentOwner + " wins!!!!!");
+				cv.setMessage(currentOwner + " wins!!!!!");
 				break cycle;
 			}
 		}

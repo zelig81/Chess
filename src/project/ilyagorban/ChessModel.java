@@ -74,11 +74,11 @@ public class ChessModel {
 				return "done";
 			}
 			else{
-				return "incorrect move";
+				return "incorrect move for this figure";
 			}
 		}
 		else{
-			return "no owner's figure";
+			return "there is not owner's figure";
 		}
 		
 		
