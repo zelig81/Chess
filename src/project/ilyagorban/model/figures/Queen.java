@@ -11,21 +11,38 @@ public class Queen extends Figure {
 	}
 
 	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-
+	protected int checkMoveCorrect(XY from, XY to) {
+		int stepsX = Math.abs(to.getX() - from.getX());
+		int stepsY = Math.abs(to.getY() - from.getY());
+		boolean isMoveAsRook = (stepsX == 0 || stepsY == 0) ;
+		boolean isMoveAsBishop = (stepsX == stepsY);
+		boolean result = isMoveAsRook || isMoveAsBishop;
+		return (result) ? CORRECT_MOVE : INCORRECT_MOVE;
 	}
 
 	@Override
-	protected boolean checkMoveCorrectness(XY from, XY to) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
-		// TODO Auto-generated method stub
-		return false;
+	protected boolean isNoFigureOnTheWay(Figure[][] board, XY to) {
+		int xMoves = to.getX() - this.getXY().getX();
+		int xDivision = (xMoves != 0 ? Math.abs(xMoves) : 1);
+		int xDirection = xMoves / xDivision;
+		int yMoves = to.getY() - this.getXY().getY();
+		int yDivision = (yMoves != 0 ? Math.abs(yMoves) : 1);
+		int yDirection = yMoves / yDivision;
+		int steps = Math.max(xDivision, yDivision) - 1;
+		int x = 0;
+		int y = 0;
+		while(steps != 0){
+			if (y < yDivision - 1)
+				y++;
+			if (x < xDivision - 1)
+				x++;
+			steps--;
+			Figure next = board[this.getXY().getX() + xDirection * x][this.getXY().getY() + yDirection * y];
+			if (next != this && next != null){
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

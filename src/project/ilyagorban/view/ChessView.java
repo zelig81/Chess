@@ -62,4 +62,9 @@ public class ChessView {
 		
 	}
 
+	public void getMessageToView(String string) {
+		System.out.println(string);
+		
+	}
+
 }

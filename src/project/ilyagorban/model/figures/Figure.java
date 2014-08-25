@@ -12,32 +12,52 @@ import project.ilyagorban.model.XY;
  *
  */
 public abstract class Figure {
+	public static final int CORRECT_MOVE = 0;
+	public static final int INCORRECT_MOVE = 1;
+	public static final int NO_MOVE = 2;
+	public static final int YOUR_FIGURE_ON_END_POINT = 3;
+	public static final int FIGURES_ON_WAY = 4;
+	public static final int CHECK = 9;
+	public static final int CHECKMATE = 10;
 	private XY xy;
-	protected Rank rank;
+	private boolean touched;
+	private Rank rank;
+	
 	public Figure(XY xy, Rank r){
 		this.xy = xy;
-		this.rank = r;
+		this.setRank(r);
 	}
 	
-	protected boolean checkEndPointEmptyOrEnemy(Owner o, Figure figTo){
+	protected boolean isEndPointEmptyOrEnemy(Owner o, Figure figTo){
 		boolean result = (figTo == null || figTo.getRank().getOwner() != o) ;
 		return result;
 
 	}
 	
-	public boolean checkMove(Figure[][] board, XY to) {
+	public int checkMove(Figure[][] board, XY to) {
 		boolean isMoveMade = !this.getXY().equals(to) ;
-		boolean moveCorrectness = (checkMoveCorrectness(this.getXY(), to));
-		boolean noFigureOnTheWay = (checkNoFigureOnTheWay(board, to));
-		boolean endPointEmptyOrEnemy = checkEndPointEmptyOrEnemy(this.getRank().getOwner(), board[to.getX()][to.getY()]);
-		boolean result =  isMoveMade && moveCorrectness && noFigureOnTheWay && endPointEmptyOrEnemy;
-		return result;
+		if (isMoveMade == false)
+			return NO_MOVE;
+		
+		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board[to.getX()][to.getY()]);
+		if (isEndPointEmptyOrEnemy == false)
+			return YOUR_FIGURE_ON_END_POINT;
+		
+		int moveCorrect = checkMoveCorrect(this.getXY(), to);
+		if (moveCorrect != CORRECT_MOVE)
+			return moveCorrect;
+		
+		boolean isNoFigureOnTheWay = (isNoFigureOnTheWay(board, to));
+		if (isNoFigureOnTheWay == false)
+			return FIGURES_ON_WAY;
+		
+		return CORRECT_MOVE;
 		
 	}
 	
-	protected abstract boolean checkMoveCorrectness(XY from, XY to);
+	protected abstract int checkMoveCorrect(XY from, XY to);
 	
-	protected abstract boolean checkNoFigureOnTheWay(Figure[][] board, XY to);
+	protected abstract boolean isNoFigureOnTheWay(Figure[][] board, XY to);
 	
 	public Rank getRank() {
 		return rank;
@@ -47,19 +67,29 @@ public abstract class Figure {
 		return xy;
 	}
 	
-	public abstract void move();
-	
 	public void setXY(XY xy){
 		this.xy = xy;
 	}
 
 	public String toString(){
-		return rank.getPicture();
+		return getRank().getPicture();
 	}
 
 	public Owner checkKingRemove() {
 		return null;
 		
+	}
+
+	public boolean isTouched() {
+		return touched;
+	}
+
+	public void setTouched(boolean touched) {
+		this.touched = touched;
+	}
+
+	public void setRank(Rank rank) {
+		this.rank = rank;
 	}
 
 }

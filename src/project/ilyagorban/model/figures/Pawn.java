@@ -10,27 +10,13 @@ public class Pawn extends Figure {
 		super(p, r);
 	}
 
-	public void setRank(Rank rank){
-		super.rank = rank;
-	}
-
-
 	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	@Override
-	protected boolean checkMoveCorrectness(XY from, XY to) {
-		// TODO Auto-generated method stub
-		return true;
+	protected int checkMoveCorrect(XY from, XY to) {
+		return 0;
 	}
 
 	@Override
-	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
-		// TODO Auto-generated method stub
+	protected boolean isNoFigureOnTheWay(Figure[][] board, XY to) {
 		return true;
 	}
 

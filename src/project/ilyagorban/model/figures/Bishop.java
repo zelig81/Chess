@@ -11,25 +11,19 @@ public class Bishop extends Figure {
 	}
 
 	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean checkMoveCorrectness(XY from, XY to) {
+	public int checkMoveCorrect(XY from, XY to) {
 		int stepsX = Math.abs(to.getX() - from.getX());
 		int stepsY = Math.abs(to.getY() - from.getY());
-		return stepsX == stepsY ? true : false;
+		return stepsX == stepsY ? CORRECT_MOVE : INCORRECT_MOVE;
 	}
 
 	@Override
-	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
-		int stepsX = Math.abs(to.getX() - this.getXY().getX());
-		int directionX = (to.getX() -  this.getXY().getX()) / stepsX;
-		int directionY = (to.getY() - this.getXY().getY()) /stepsX;
-		for (int i = 1; i < stepsX; i++){
-			if (board[this.getXY().getX() + directionX * i][this.getXY().getY() + directionY * i] != null){
+	protected boolean isNoFigureOnTheWay(Figure[][] board, XY to) {
+		int xMoves = to.getX() - this.getXY().getX();
+		int xDirection = xMoves / Math.abs(xMoves);
+		int yDirection = (to.getY() - this.getXY().getY()) / Math.abs(xMoves);
+		for (int i = 1; i < Math.abs(xMoves); i++){
+			if (board[this.getXY().getX() + xDirection * i][this.getXY().getY() + yDirection * i] != null){
 				return false;
 			}
 		}

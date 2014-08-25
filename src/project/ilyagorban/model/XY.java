@@ -46,4 +46,25 @@ public class XY{
 		
 	}
 
+	@Override
+	public int hashCode() {
+		return cX.getX() * 8 + y;
+	}
+
+	public static XY[] getXYfromInput(String input) {
+		String[] arrStr = input.split(" ");
+		if (arrStr.length == 2 && arrStr[0].length() == 2 && arrStr[1].length() == 2 && !arrStr[0].equals(arrStr[1])){
+			char cFrom = arrStr[0].charAt(0);
+			char cTo = arrStr[1].charAt(0);
+			if ((cFrom >= 'a' && cFrom <= 'h') && (cTo >= 'a' && cTo <= 'h')){
+				char iFrom = arrStr[0].charAt(1);
+				char iTo = arrStr[1].charAt(1);
+				if ((iFrom >= '1' && iFrom <= '8') && (iTo >= '1' && iTo <= '8')){
+					return new XY[]{new XY(arrStr[0]), new XY(arrStr[1])};
+				}
+			}
+		}
+		return null;
+	}
+	
 }

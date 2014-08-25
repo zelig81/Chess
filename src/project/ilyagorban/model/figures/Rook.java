@@ -11,19 +11,13 @@ public class Rook extends Figure {
 	}
 
 	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected boolean checkMoveCorrectness(XY from, XY to) {
+	protected int checkMoveCorrect(XY from, XY to) {
 		boolean result = (Math.abs(to.getX() - from.getX()) == 0 || Math.abs(to.getY() - from.getY()) == 0) ;
-		return result;
+		return (result) ? CORRECT_MOVE : INCORRECT_MOVE;
 	}
 
 	@Override
-	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
+	protected boolean isNoFigureOnTheWay(Figure[][] board, XY to) {
 		if (Math.abs(to.getX() - this.getXY().getX()) == 0){
 			int direction = to.getY() - this.getXY().getY();
 			int step = direction / Math.abs(direction);

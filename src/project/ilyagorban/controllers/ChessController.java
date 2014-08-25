@@ -17,26 +17,32 @@ public class ChessController {
 	public void start(){
 		cm.initializeGame();
 		Owner currentOwner = Owner.WHITE;
-		cycle: while(true){
+		while(true){
 			String input = cv.showBoard(cm.getBoard(), currentOwner);
+			
 			if ("exit".equals(input))
 				break;
-			switch (cm.move(input, currentOwner)){
-			case "done":
-				currentOwner = Owner.changeOwner(currentOwner);
+			
+			String returnMessage = cm.move(input, currentOwner);
+			if ("checkmate".equals(returnMessage)){
+				cv.getMessageToView(currentOwner + " wins!!!!!");
 				break;
-			case "incorrect input":
-				cv.setMessage("incorrect input string");
-				break;
-			case "there is not owner's figure":
-				cv.setMessage("no owner's figure");
-				break;
-			case "incorrect move for this figure":
-				cv.setMessage("incorrect move for this figure");
-				break;
-			case "king removing":
-				cv.setMessage(currentOwner + " wins!!!!!");
-				break cycle;
+			}
+			else{
+				switch (returnMessage){
+				case "done":
+					currentOwner = Owner.changeOwner(currentOwner);
+					break;
+				case "incorrect input":
+					cv.setMessage("incorrect input string");
+					break;
+				case "there is not owner's figure":
+					cv.setMessage("there is no " + currentOwner.name() + "'s figure on the start coordinate");
+					break;
+				case "incorrect move for this figure":
+					cv.setMessage("incorrect move for this figure");
+					break;
+				}
 			}
 		}
 	}

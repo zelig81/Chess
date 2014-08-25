@@ -49,23 +49,23 @@ public class ChessModel {
 	}
 
 	public String move(String input, Owner o) {
-		XY[] arrXY = getXYfromInput(input);
+		XY[] arrXY = XY.getXYfromInput(input);
 		if (arrXY == null){
 			return "incorrect input";
 		}
 		XY from = arrXY[0];
 		XY to = arrXY[1];
-		//TODO check possibility of move and correctness of input
 		//TODO make checking pat/check/mate
 		Figure figFrom = board[from.getX()][from.getY()];
 		if (figFrom!= null && figFrom.getRank().getOwner()== o){
-			if (figFrom.checkMove(board,to)){
+			int checkMove = figFrom.checkMove(board,to);
+			if (checkMove == Figure.CORRECT_MOVE){
 				board[from.getX()][from.getY()] = null;
 				Figure figTo = board[to.getX()][to.getY()];
 				if (figTo != null){
 					Owner ownerOfremovedKing = figTo.checkKingRemove();
 					if (ownerOfremovedKing != null) {
-						return "king removing";
+						return "checkmate";
 					}
 					
 				}
@@ -82,22 +82,6 @@ public class ChessModel {
 		}
 		
 		
-	}
-
-	private XY[] getXYfromInput(String input) {
-		String[] arrStr = input.split(" ");
-		if (arrStr.length == 2 && arrStr[0].length() == 2 && arrStr[1].length() == 2 && !arrStr[0].equals(arrStr[1])){
-			char cFrom = arrStr[0].charAt(0);
-			char cTo = arrStr[1].charAt(0);
-			if ((cFrom >= 'a' && cFrom <= 'h') && (cTo >= 'a' && cTo <= 'h')){
-				char iFrom = arrStr[0].charAt(1);
-				char iTo = arrStr[1].charAt(1);
-				if ((iFrom >= '0' && iFrom <= '9') && (iTo >= '0' && iTo <= '9')){
-					return new XY[]{new XY(arrStr[0]), new XY(arrStr[1])};
-				}
-			}
-		}
-		return null;
 	}
 
 }
