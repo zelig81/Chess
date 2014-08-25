@@ -1,7 +1,11 @@
 /**
  * 
  */
-package project.ilyagorban.model;
+package project.ilyagorban.model.figures;
+
+import project.ilyagorban.model.Owner;
+import project.ilyagorban.model.Rank;
+import project.ilyagorban.model.XY;
 
 /**
  * @author zelig
@@ -22,7 +26,7 @@ public abstract class Figure {
 	}
 	
 	public boolean checkMove(Figure[][] board, XY to) {
-		boolean isMoveMade = (Math.abs(to.getX() - this.getXY().getX()) + Math.abs(to.getY() - this.getXY().getY()) > 0) ;
+		boolean isMoveMade = !this.getXY().equals(to) ;
 		boolean moveCorrectness = (checkMoveCorrectness(this.getXY(), to));
 		boolean noFigureOnTheWay = (checkNoFigureOnTheWay(board, to));
 		boolean endPointEmptyOrEnemy = checkEndPointEmptyOrEnemy(this.getRank().getOwner(), board[to.getX()][to.getY()]);

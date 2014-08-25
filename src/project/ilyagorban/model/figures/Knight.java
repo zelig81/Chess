@@ -1,16 +1,14 @@
-package project.ilyagorban.model;
+package project.ilyagorban.model.figures;
 
-// ♙♟ figures
-public class Pawn extends Figure {
-	
-	public Pawn(XY p, Rank r) {
+import project.ilyagorban.model.Rank;
+import project.ilyagorban.model.XY;
+
+// ♘♞ figures
+public class Knight extends Figure {
+
+	public Knight(XY p, Rank r) {
 		super(p, r);
 	}
-
-	public void setRank(Rank rank){
-		super.rank = rank;
-	}
-
 
 	@Override
 	public void move() {
@@ -18,17 +16,16 @@ public class Pawn extends Figure {
 
 	}
 
-
 	@Override
 	protected boolean checkMoveCorrectness(XY from, XY to) {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override
 	protected boolean checkNoFigureOnTheWay(Figure[][] board, XY to) {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 }

@@ -1,4 +1,7 @@
-package project.ilyagorban.model;
+package project.ilyagorban.model.figures;
+
+import project.ilyagorban.model.Rank;
+import project.ilyagorban.model.XY;
 
 // ♛♕ figures
 public class Queen extends Figure {

@@ -1,6 +1,6 @@
-package project.ilyagorban;
+package project.ilyagorban.model;
 
-import project.ilyagorban.model.*;
+import project.ilyagorban.model.figures.*;
 
 public class ChessModel {
 

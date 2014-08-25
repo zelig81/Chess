@@ -1,6 +1,8 @@
-package project.ilyagorban;
+package project.ilyagorban.controllers;
 
+import project.ilyagorban.model.ChessModel;
 import project.ilyagorban.model.Owner;
+import project.ilyagorban.view.ChessView;
 
 public class ChessController {
 

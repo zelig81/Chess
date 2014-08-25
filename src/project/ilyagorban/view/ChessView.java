@@ -1,9 +1,9 @@
-package project.ilyagorban;
+package project.ilyagorban.view;
 
 import java.util.Scanner;
 
-import project.ilyagorban.model.Figure;
 import project.ilyagorban.model.Owner;
+import project.ilyagorban.model.figures.Figure;
 
 public class ChessView {
 	

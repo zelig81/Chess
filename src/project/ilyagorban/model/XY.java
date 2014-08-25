@@ -38,5 +38,12 @@ public class XY{
 		this.cX = CoordX.getCoordX(xy.charAt(0));
 		this.y = (int) Integer.parseInt(String.valueOf(xy.charAt(1)))- 1;
 	}
+	
+	@Override
+	public boolean equals(Object o){
+		XY other = (XY) o;
+		return this.getY() == other.getY() && this.getX() == other.getX();
+		
+	}
 
 }

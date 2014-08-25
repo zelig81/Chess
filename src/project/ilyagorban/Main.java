@@ -3,6 +3,10 @@
  */
 package project.ilyagorban;
 
+import project.ilyagorban.controllers.ChessController;
+import project.ilyagorban.model.ChessModel;
+import project.ilyagorban.view.ChessView;
+
 /**
  * @author ilya gorban
  *
