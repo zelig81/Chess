@@ -34,7 +34,7 @@ public class ChessView {
 			System.out.println(message);
 			message = null;
 		}
-		System.out.println("░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░");
+		System.out.println("░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░|░");
 								   //8|▓♜▓|░♞░|▓♝▓|░♛░|▓♚▓|░♝░|▓♞▓|░♜░|
 		for(int y = 7; y >= 0; y--){
 			StringBuilder output = (new StringBuilder(String.valueOf(y + 1))).append( "|");
@@ -51,7 +51,7 @@ public class ChessView {
 			output.append(y+1);
 			System.out.println(output);
 		}
-		System.out.println("░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░");
+		System.out.println("░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░|░");
 		System.out.println(currentOwner + " your move (for example [e2 e4]) to enter [exit] to quit the game:");
 		String input = sc.nextLine();
 		return input;
