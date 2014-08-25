@@ -15,8 +15,9 @@ public abstract class Figure {
 	public static final int CORRECT_MOVE = 0;
 	public static final int INCORRECT_MOVE = 1;
 	public static final int NO_MOVE = 2;
-	public static final int YOUR_FIGURE_ON_END_POINT = 3;
-	public static final int FIGURES_ON_WAY = 4;
+	public static final int OBSTACLE_ON_END_POINT = 3;
+	public static final int OBSTACLE_ON_WAY = 4;
+	public static final int PAWN_PROMOTION = 5;
 	public static final int CHECK = 9;
 	public static final int CHECKMATE = 10;
 	private XY xy;
@@ -39,23 +40,23 @@ public abstract class Figure {
 		if (isMoveMade == false)
 			return NO_MOVE;
 		
-		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board[to.getX()][to.getY()]);
-		if (isEndPointEmptyOrEnemy == false)
-			return YOUR_FIGURE_ON_END_POINT;
-		
-		int moveCorrect = checkMoveCorrect(this.getXY(), to);
+		int moveCorrect = checkMoveCorrect(board, to);
 		if (moveCorrect != CORRECT_MOVE)
 			return moveCorrect;
 		
+		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board[to.getX()][to.getY()]);
+		if (isEndPointEmptyOrEnemy == false)
+			return OBSTACLE_ON_END_POINT;
+		
 		boolean isNoFigureOnTheWay = (isNoFigureOnTheWay(board, to));
 		if (isNoFigureOnTheWay == false)
-			return FIGURES_ON_WAY;
+			return OBSTACLE_ON_WAY;
 		
 		return CORRECT_MOVE;
 		
 	}
 	
-	protected abstract int checkMoveCorrect(XY from, XY to);
+	protected abstract int checkMoveCorrect(Figure[][] board, XY to);
 	
 	protected abstract boolean isNoFigureOnTheWay(Figure[][] board, XY to);
 	

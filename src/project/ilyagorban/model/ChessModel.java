@@ -59,7 +59,7 @@ public class ChessModel {
 		Figure figFrom = board[from.getX()][from.getY()];
 		if (figFrom!= null && figFrom.getRank().getOwner()== o){
 			int checkMove = figFrom.checkMove(board,to);
-			if (checkMove == Figure.CORRECT_MOVE){
+			if (checkMove == Figure.CORRECT_MOVE || checkMove == Figure.PAWN_PROMOTION){
 				board[from.getX()][from.getY()] = null;
 				Figure figTo = board[to.getX()][to.getY()];
 				if (figTo != null){
@@ -71,7 +71,7 @@ public class ChessModel {
 				}
 				figFrom.setXY(to);
 				board[to.getX()][to.getY()] = figFrom;
-				return "done";
+				return checkMove == Figure.CORRECT_MOVE ? "done" : "pawn promotion";
 			}
 			else{
 				return "incorrect move for this figure";
@@ -82,6 +82,16 @@ public class ChessModel {
 		}
 		
 		
+	}
+
+	public boolean promote(String input, String promotion) {
+		XY to = XY.getXYfromInput(input)[1];
+		Figure pawn = board[to.getX()][to.getY()];
+		Rank gotRank = Rank.getFigure(promotion, pawn.getRank().getOwner());
+		if (gotRank == null)
+			return false;
+		pawn.setRank(gotRank);
+		return true;
 	}
 
 }

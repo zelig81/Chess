@@ -11,9 +11,9 @@ public class Queen extends Figure {
 	}
 
 	@Override
-	protected int checkMoveCorrect(XY from, XY to) {
-		int stepsX = Math.abs(to.getX() - from.getX());
-		int stepsY = Math.abs(to.getY() - from.getY());
+	protected int checkMoveCorrect(Figure[][] board, XY to) {
+		int stepsX = Math.abs(to.getX() - this.getXY().getX());
+		int stepsY = Math.abs(to.getY() - this.getXY().getY());
 		boolean isMoveAsRook = (stepsX == 0 || stepsY == 0) ;
 		boolean isMoveAsBishop = (stepsX == stepsY);
 		boolean result = isMoveAsRook || isMoveAsBishop;

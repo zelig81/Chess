@@ -11,9 +11,9 @@ public class Bishop extends Figure {
 	}
 
 	@Override
-	public int checkMoveCorrect(XY from, XY to) {
-		int stepsX = Math.abs(to.getX() - from.getX());
-		int stepsY = Math.abs(to.getY() - from.getY());
+	public int checkMoveCorrect(Figure[][] board, XY to) {
+		int stepsX = Math.abs(to.getX() - this.getXY().getX());
+		int stepsY = Math.abs(to.getY() - this.getXY().getY());
 		return stepsX == stepsY ? CORRECT_MOVE : INCORRECT_MOVE;
 	}
 

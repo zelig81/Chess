@@ -13,9 +13,9 @@ public class King extends Figure {
 	}
 
 	@Override
-	protected int checkMoveCorrect(XY from, XY to) {
-		int stepsX = Math.abs(to.getX() -  from.getX());
-		int stepsY = Math.abs(to.getY() - from.getY() );
+	protected int checkMoveCorrect(Figure[][] board, XY to) {
+		int stepsX = Math.abs(to.getX() -  this.getXY().getX());
+		int stepsY = Math.abs(to.getY() - this.getXY().getY() );
 		return (stepsX <=1 && stepsY <=1) ? CORRECT_MOVE : INCORRECT_MOVE;
 	}
 

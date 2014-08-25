@@ -11,8 +11,8 @@ public class Rook extends Figure {
 	}
 
 	@Override
-	protected int checkMoveCorrect(XY from, XY to) {
-		boolean result = (Math.abs(to.getX() - from.getX()) == 0 || Math.abs(to.getY() - from.getY()) == 0) ;
+	protected int checkMoveCorrect(Figure[][] board, XY to) {
+		boolean result = (Math.abs(to.getX() - this.getXY().getX()) == 0 || Math.abs(to.getY() - this.getXY().getY()) == 0) ;
 		return (result) ? CORRECT_MOVE : INCORRECT_MOVE;
 	}
 

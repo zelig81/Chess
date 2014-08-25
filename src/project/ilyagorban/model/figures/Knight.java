@@ -11,9 +11,9 @@ public class Knight extends Figure {
 	}
 
 	@Override
-	protected int checkMoveCorrect(XY from, XY to) {
-		int stepX = Math.abs(to.getX() - from.getX());
-		int stepY = Math.abs(to.getY() - from.getY());
+	protected int checkMoveCorrect(Figure[][] board, XY to) {
+		int stepX = Math.abs(to.getX() - this.getXY().getX());
+		int stepY = Math.abs(to.getY() - this.getXY().getY());
 		boolean isEquals2 = (stepX * stepY == 2);
 		return (isEquals2 == true) ? CORRECT_MOVE : INCORRECT_MOVE;
 	}

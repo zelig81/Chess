@@ -67,4 +67,10 @@ public class ChessView {
 		
 	}
 
+	public String getInput(String string) {
+		System.out.println(string);
+		String result = sc.nextLine();
+		return result;
+	}
+
 }
