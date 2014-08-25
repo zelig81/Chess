@@ -15,7 +15,8 @@ public class Rook extends Figure {
 
 	@Override
 	protected boolean checkMoveCorrectness(XY from, XY to) {
-		return (Math.abs(to.getX() - from.getX()) + Math.abs(to.getY() - from.getY()) > 0) && (Math.abs(to.getX() - from.getX()) == 0 || Math.abs(to.getY() - from.getY()) == 0);
+		boolean result = (Math.abs(to.getX() - from.getX()) == 0 || Math.abs(to.getY() - from.getY()) == 0) ;
+		return result;
 	}
 
 	@Override

@@ -30,9 +30,10 @@ public class ChessView {
 		System.out.println("  a  b  c d  e  f  g  h");
 		for(int y = 7; y >= 0; y--){
 			System.out.print(y + 1);
-			for (int x = 7; x >= 0; x--){
-				if (figures[x][y] != null){
-					System.out.print(figures[x][y]);
+			for (int x = 0; x <= 7; x++){
+				Figure fig = figures[x][y];
+				if (fig != null){
+					System.out.print(fig);
 				}
 				else{
 					System.out.print(((x+y)% 2 ==1)? "\u25a0" : "\u25a1" );

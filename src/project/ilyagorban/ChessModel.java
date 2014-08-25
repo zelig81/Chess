@@ -11,8 +11,8 @@ public class ChessModel {
 		board[0][0] = new Rook(new XY(0,0), Rank.WHITE_ROOK	);
 		board[1][0] = new Knight(new XY(1,0), Rank.WHITE_KNIGHT	);
 		board[2][0] = new Bishop(new XY(2,0), Rank.WHITE_BISHOP	);
-		board[3][0] = new King(new XY(3,0), Rank.WHITE_KING	);
-		board[4][0] = new Queen(new XY(4,0), Rank.WHITE_QUEEN	);
+		board[3][0] = new Queen(new XY(3,0), Rank.WHITE_QUEEN	);
+		board[4][0] = new King(new XY(4,0), Rank.WHITE_KING	);
 		board[5][0] = new Bishop(new XY(5,0), Rank.WHITE_BISHOP);
 		board[6][0] = new Knight(new XY(6,0), Rank.WHITE_KNIGHT	);
 		board[7][0] = new Rook(new XY(7,0), Rank.WHITE_ROOK	);
@@ -28,8 +28,8 @@ public class ChessModel {
 		board[0][7] = new Rook(new XY(0,7), Rank.BLACK_ROOK	);
 		board[1][7] = new Knight(new XY(1,7), Rank.BLACK_KNIGHT	);
 		board[2][7] = new Bishop(new XY(2,7), Rank.BLACK_BISHOP	);
-		board[3][7] = new King(new XY(3,7), Rank.BLACK_KING	);
-		board[4][7] = new Queen(new XY(4,7), Rank.BLACK_QUEEN	);
+		board[3][7] = new Queen(new XY(3,7), Rank.BLACK_QUEEN	);
+		board[4][7] = new King(new XY(4,7), Rank.BLACK_KING	);
 		board[5][7] = new Bishop(new XY(5,7), Rank.BLACK_BISHOP);
 		board[6][7] = new Knight(new XY(6,7), Rank.BLACK_KNIGHT	);
 		board[7][7] = new Rook(new XY(7,7), Rank.BLACK_ROOK	);

@@ -8,7 +8,7 @@ public class XY{
 		setXY(x,y);
 	}
 	
-	public XY(String xy){ //[e2 e4]
+	public XY(String xy){ //[e2 e4] -> 3.1 3.3
 		setXY(xy);
 		
 	}
