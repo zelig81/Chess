@@ -41,7 +41,7 @@ public abstract class Figure {
 			return NO_MOVE;
 		
 		int moveCorrect = checkMoveCorrect(board, to);
-		if (moveCorrect != CORRECT_MOVE)
+		if (moveCorrect == INCORRECT_MOVE)
 			return moveCorrect;
 		
 		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board[to.getX()][to.getY()]);
@@ -52,7 +52,7 @@ public abstract class Figure {
 		if (isNoFigureOnTheWay == false)
 			return OBSTACLE_ON_WAY;
 		
-		return CORRECT_MOVE;
+		return moveCorrect;
 		
 	}
 	

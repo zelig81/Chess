@@ -39,6 +39,7 @@ public class ChessController {
 						String promotion = cv.getInput("Your pawn is ready to be promoted. To which figure you want to promote it (r)ook/k(n)ight/(b)ishop/(q)ueen?");
 						success = cm.promote(input, promotion);
 					}
+					currentOwner = Owner.changeOwner(currentOwner);
 					break;
 				case "incorrect input":
 					cv.setMessage("incorrect input string");

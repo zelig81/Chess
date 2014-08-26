@@ -71,6 +71,7 @@ public class ChessModel {
 				}
 				figFrom.setXY(to);
 				board[to.getX()][to.getY()] = figFrom;
+				figFrom.setTouched(true);
 				return checkMove == Figure.CORRECT_MOVE ? "done" : "pawn promotion";
 			}
 			else{
