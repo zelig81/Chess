@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import project.ilyagorban.model.Owner;
 import project.ilyagorban.model.Rank;
 import project.ilyagorban.model.XY;
+import static project.ilyagorban.model.ChessModel.*;
 
 // ♙♟ figures
 public class Pawn extends Figure {
@@ -15,6 +16,7 @@ public class Pawn extends Figure {
 
 	@Override
 	protected int checkMoveCorrect(Figure[][] board, XY to) {
+		//TODO en-passant
 		int stepY = to.getY() - this.getXY().getY();
 		int stepX = to.getX() - this.getXY().getX();
 		int direction = (this.getRank().getOwner() == Owner.WHITE) ? 1 : -1;

@@ -2,6 +2,7 @@ package project.ilyagorban.model.figures;
 
 import project.ilyagorban.model.Rank;
 import project.ilyagorban.model.XY;
+import static project.ilyagorban.model.ChessModel.*;
 
 // ♛♕ figures
 public class Queen extends Figure {

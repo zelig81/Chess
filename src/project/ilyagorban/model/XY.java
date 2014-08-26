@@ -17,16 +17,8 @@ public class XY{
 		return cX.getX();
 	}
 	
-	public String getXName(){
-		return cX.toString();
-	}
-	
 	public int getY(){
 		return y;
-	}
-	
-	public String getYName(){
-		return String.valueOf(y+1);
 	}
 	
 	public void setXY(int x, int y){

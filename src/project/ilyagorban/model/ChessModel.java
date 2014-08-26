@@ -3,6 +3,17 @@ package project.ilyagorban.model;
 import project.ilyagorban.model.figures.*;
 
 public class ChessModel {
+	public static final int CORRECT_MOVE = 0;
+	public static final int DONT_TOUCH_NOT_YOUR_FIGURE_TO_MOVE = 1;
+	public static final int INCORRECT_MOVE = 2;
+	public static final int NO_MOVE = 3;
+	public static final int OBSTACLE_ON_END_POINT = 4;
+	public static final int OBSTACLE_ON_WAY = 5;
+	public static final int PAWN_PROMOTION = 6;
+	public static final int CASTLING = 7;
+	public static final int CHECK = 9;
+	public static final int CHECKMATE = 10;
+	public static final int INCORRECT_INPUT = -1;
 
 	private Figure[][] board;
 
@@ -48,39 +59,45 @@ public class ChessModel {
 		return board;
 	}
 
-	public String move(String input, Owner o) {
+	public int move(String input, Owner o) {
 		XY[] arrXY = XY.getXYfromInput(input);
 		if (arrXY == null){
-			return "incorrect input";
+			return INCORRECT_INPUT;
 		}
 		XY from = arrXY[0];
 		XY to = arrXY[1];
 		//TODO make checking pat/check/mate
+		int checkMove = INCORRECT_MOVE;
 		Figure figFrom = board[from.getX()][from.getY()];
 		if (figFrom!= null && figFrom.getRank().getOwner()== o){
-			int checkMove = figFrom.checkMove(board,to);
-			if (checkMove == Figure.CORRECT_MOVE || checkMove == Figure.PAWN_PROMOTION){
+			checkMove = figFrom.checkMove(board,to);
+			if (checkMove == CORRECT_MOVE || checkMove == PAWN_PROMOTION || checkMove == CASTLING){
 				board[from.getX()][from.getY()] = null;
 				Figure figTo = board[to.getX()][to.getY()];
 				if (figTo != null){
 					Owner ownerOfremovedKing = figTo.checkKingRemove();
 					if (ownerOfremovedKing != null) {
-						return "checkmate";
+						return CHECKMATE;
 					}
 					
 				}
 				figFrom.setXY(to);
 				board[to.getX()][to.getY()] = figFrom;
 				figFrom.setTouched(true);
-				return checkMove == Figure.CORRECT_MOVE ? "done" : "pawn promotion";
-			}
-			else{
-				return "incorrect move for this figure";
+				if (checkMove == CASTLING){
+					int rookX = (to.getX() == 6) ? 7 : 0;
+					int newRookX = (to.getX() == 6) ? 5 : 3;
+					Figure figRook = board[rookX][to.getY()];
+					figRook.setTouched(true);
+					board[rookX][to.getY()] = null;
+					board[newRookX][to.getY()] = figRook;
+				}
 			}
 		}
 		else{
-			return "there is not owner's figure";
+			return DONT_TOUCH_NOT_YOUR_FIGURE_TO_MOVE;
 		}
+		return checkMove;
 		
 		
 	}
