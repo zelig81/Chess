@@ -23,13 +23,13 @@ public class Bishop extends Figure {
 		int xMoves = to.getX() - this.getXY().getX();
 		int xDirection = xMoves / Math.abs(xMoves);
 		int yDirection = (to.getY() - this.getXY().getY()) / Math.abs(xMoves);
-		for (int i = 1; i < Math.abs(xMoves); i++){
-			if (board[this.getXY().getX() + xDirection * i][this.getXY().getY() + yDirection * i] != null){
+		for (int i = 1; i < Math.abs(xMoves); i++) {
+			if (board[this.getXY().getX() + xDirection * i][this.getXY().getY()
+					+ yDirection * i] != null) {
 				return false;
 			}
 		}
 		return true;
 	}
-
 
 }
