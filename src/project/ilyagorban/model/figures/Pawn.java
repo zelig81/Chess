@@ -1,7 +1,6 @@
 package project.ilyagorban.model.figures;
 
 import static project.ilyagorban.model.ChessModel.CORRECT_MOVE;
-import static project.ilyagorban.model.ChessModel.INCORRECT_MOVE;
 import static project.ilyagorban.model.ChessModel.PAWN_PROMOTION;
 
 import java.util.ArrayList;
@@ -18,30 +17,39 @@ public class Pawn extends Figure {
 	super(p, r);
     }
 
-    // @Override
-    protected int checkMoveCorrect(Figure[][] board, XY to) {
-	// TODO en-passant
-	int stepY = to.getY() - this.getXY().getY();
-	int stepX = to.getX() - this.getXY().getX();
-	int direction = (this.getRank().getOwner() == Owner.WHITE) ? 1 : -1;
-	boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() == false
-		&& stepX == 0 && stepY * direction == 2);
-	boolean isAbleToGoStraightForwardOneMove = (stepX == 0 && (stepY
-		* direction == 1));
-	boolean isAbleToTakeFigure = (Math.abs(stepX) == 1) ? isAbleToTakeFigure(
-		board, to, direction) : false;
-
-	boolean result = isAbleToGoStraightForwardOneMove
-		|| isAbleToGoStraightForwardUntouchedTwoMoves
-		|| isAbleToTakeFigure;
-	boolean isReadyToBePromoted = (to.getY() == 7 || to.getY() == 0);
-	if (result && isReadyToBePromoted) {
-	    return PAWN_PROMOTION;
+    @Override
+    public int checkMove(Board board, XY to) {
+	int superMethod = super.checkMove(board, to);
+	if (superMethod == CORRECT_MOVE) {
+	    boolean isReadyToBePromoted = ((to.getY() == 7 && this.getRank()
+		    .getOwner() == Owner.WHITE) || (to.getY() == 0 && this
+		    .getRank().getOwner() == Owner.BLACK));
+	    if (isReadyToBePromoted) {
+		return PAWN_PROMOTION;
+	    }
 	}
-	return result ? CORRECT_MOVE : INCORRECT_MOVE;
+	return superMethod;
+
     }
 
-    private boolean isAbleToTakeFigure(Figure[][] board, XY to, int direction) {
+    @Override
+    public ArrayList<XY> getPossibleMoves(Board board) {
+	ArrayList<XY> output = new ArrayList<XY>();
+	int direction = this.getRank().getOwner().getDirection();
+	int x = this.getXY().getX();
+	int y = this.getXY().getY();
+	boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() == false
+		&& board.getFigure(x, y + direction) == null && board
+		.getFigure(x, y + 2 * direction) == null);
+	if (isAbleToGoStraightForwardUntouchedTwoMoves == true) {
+	    output.add(new XY(x, y + 2 * direction));
+	}
+	boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y
+		+ direction) == null);
+	if (isAbleToGoStraightForwardOneMove == true) {
+	    output.add(new XY(x, y + direction));
+	}
+	// take figure
 	ArrayList<XY> removableEnemysXY = new ArrayList<>(2);
 	if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
 	    if (this.getXY().getX() != 7) {
@@ -54,49 +62,20 @@ public class Pawn extends Figure {
 	    }
 	}
 
-	boolean isAbleToTakeFigure = false;
 	for (XY xy : removableEnemysXY) {
-	    isAbleToTakeFigure = xy.equals(to)
-		    && board[xy.getX()][xy.getY()] != null
-		    && board[xy.getX()][xy.getY()].getRank().getOwner() != this
-			    .getRank().getOwner();
+	    boolean isAbleToTakeFigure = (board.getFigure(xy) != null && board
+		    .getFigure(xy).getRank().getOwner() != this.getRank()
+		    .getOwner());
+
+	    // TODO make en passant
+	    // boolean isEnPassant = (this.getXY().getY() == (int)(direction *
+	    // 0.5 + 3.5 ) &&
+	    // board.getMovedFigure().get(board.getMovedFigure().size() -
+	    // 1).getRank().
 	    if (isAbleToTakeFigure == true)
-		break;
+		output.add(xy);
 	}
 
-	return isAbleToTakeFigure;
+	return output;
     }
-
-    // @Override
-    protected boolean isNoFigureOnTheWay(Figure[][] board, XY to) {
-	// in checkMoveCorrect i checked if this pawn can remove any opponent's
-	// chess piece
-	int stepY = to.getY() - this.getXY().getY();
-	int stepX = to.getX() - this.getXY().getX();
-	int direction = (this.getRank().getOwner() == Owner.WHITE) ? 1 : -1;
-	if (stepX == 0) {
-	    for (int i = 1; i <= stepY * direction; i++) {
-		Figure fig = board[this.getXY().getX()][this.getXY().getY() + i
-			* direction];
-		if (fig != null)
-		    return false;
-	    }
-	    return true;
-	} else {
-	    boolean isAbleToTakeFigure = isAbleToTakeFigure(board, to,
-		    direction);
-	    if (isAbleToTakeFigure == true) {
-		return true;
-	    }
-	    return false;
-	}
-    }
-
-    @Override
-    public ArrayList<XY> getPossibleMoves(Board board) {
-	ArrayList<XY> list = new ArrayList<XY>();
-	list.add(new XY(2, 2));
-	return list;
-    }
-
 }

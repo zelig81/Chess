@@ -12,8 +12,10 @@ public class ChessModel {
     public static final int CORRECT_MOVE = 0;
     public static final int PAWN_PROMOTION = 1;
     public static final int CASTLING = 2;
-    public static final int CHECK = 3;
-    public static final int CHECKMATE = 4;
+    public static final int CHECK_TO_WHITE = 3;
+    public static final int CHECK_TO_BLACK = 4;
+    public static final int CHECKMATE_TO_WHITE = 5;
+    public static final int CHECKMATE_TO_BLACK = 6;
 
     private static Board board;
 
@@ -29,25 +31,15 @@ public class ChessModel {
 	}
 	XY from = arrXY[0];
 	XY to = arrXY[1];
-	// TODO make checking pat/check/mate
 	int checkMove = INCORRECT_MOVE;
 	Figure figFrom = board.getFigure(from);
 	if (figFrom != null && figFrom.getRank().getOwner() == o) {
 	    checkMove = figFrom.checkMove(board, to);
-	    if (checkMove == CORRECT_MOVE || checkMove == PAWN_PROMOTION
-		    || checkMove == CASTLING) {
+	    if (checkMove == CORRECT_MOVE || checkMove == CASTLING) {
 		if (board.getFigure(to) != null) {
 		    board.remove(to);
 		}
 		board.move(figFrom, to);
-		// check or mate
-		if (board.check(to) == true) {
-		    return CHECK;
-
-		}
-		if (board.mate() == true) {
-		    return CHECKMATE;
-		}
 		// castling
 		if (checkMove == CASTLING) {
 		    board.castling(figFrom, to);
@@ -55,6 +47,11 @@ public class ChessModel {
 	    }
 	} else {
 	    return DONT_TOUCH_NOT_YOUR_FIGURE_TO_MOVE;
+	}
+	// promotion/check/mate check every turn
+	int resultOfCheck = board.check(figFrom, to);
+	if (resultOfCheck != 0) {
+	    return resultOfCheck;
 	}
 	return checkMove;
 
@@ -66,28 +63,11 @@ public class ChessModel {
 	Rank gotRank = Rank.getFigure(promotion, pawn.getRank().getOwner());
 	if (gotRank == null)
 	    return false;
-	pawn.setRank(gotRank);
-	return true;
-    }
-
-    public boolean castling(String input) {
-	return false;
-
-    }
-
-    public boolean enPassant(String input) {
-	return false;
-
-    }
-
-    public int check() {
-	// TODO check/checkmate/correct_move
-	return 0;
-
+	else
+	    return board.promotePawn(pawn, gotRank, to);
     }
 
     public Figure[][] getBoard() {
 	return board.getBoard();
     }
-
 }

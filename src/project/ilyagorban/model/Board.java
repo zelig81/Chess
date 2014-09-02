@@ -81,31 +81,31 @@ public class Board {
 	figFrom.setTouched(true);
     }
 
-    ArrayList<XY> getXyOfWhites() {
+    public ArrayList<XY> getXyOfWhites() {
 	return xyOfWhites;
     }
 
-    ArrayList<XY> getXyOfBlacks() {
+    public ArrayList<XY> getXyOfBlacks() {
 	return xyOfBlacks;
     }
 
-    XY getXyWhiteKing() {
+    public XY getXyWhiteKing() {
 	return xyWhiteKing;
     }
 
-    XY getXyBlackKing() {
+    public XY getXyBlackKing() {
 	return xyBlackKing;
     }
 
-    ArrayList<XY> getStartPositions() {
+    public ArrayList<XY> getStartPositions() {
 	return startPositions;
     }
 
-    ArrayList<XY> getEndPositions() {
+    public ArrayList<XY> getEndPositions() {
 	return endPositions;
     }
 
-    ArrayList<Figure> getMovedFigure() {
+    public ArrayList<Figure> getMovedFigure() {
 	return movedFigure;
     }
 
@@ -135,17 +135,23 @@ public class Board {
 	remove(xy.getX(), xy.getY());
     }
 
-    public boolean check(XY to) {
-	return check(to.getX(), to.getY());
+    public boolean promotePawn(Figure pawn, Rank gotRank, XY to) {
+	pawn.setRank(gotRank);
+	return true;
+    }
+
+    public int check(Figure figFrom, XY to) {
+	return check(figFrom, to.getX(), to.getY());
 
     }
 
-    private boolean check(int x, int y) {
-
-	return false;
+    private int check(Figure figFrom, int x, int y) {
+	// TODO make check
+	return ChessModel.CORRECT_MOVE;
     }
 
     public boolean mate() {
+	// TODO make mate
 	return false;
     }
 
@@ -161,4 +167,10 @@ public class Board {
 		.getY());
 
     }
+
+    public void enPassant(XY to) {
+	// TODO make board en passant
+
+    }
+
 }
