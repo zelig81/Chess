@@ -6,43 +6,51 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import project.ilyagorban.model.Board;
 import project.ilyagorban.model.Rank;
 import project.ilyagorban.model.XY;
 import project.ilyagorban.model.figures.Bishop;
-import project.ilyagorban.model.figures.Figure;
 
 public class TestBishop {
     XY xy = new XY(0, 0);
     Bishop b = new Bishop(xy, Rank.WHITE_BISHOP);
-    Figure[][] board = new Figure[8][8];
+    Board board = new Board();
 
     @Before
     public void setUp() throws Exception {
-	board[xy.getX()][xy.getY()] = b;
+	board.initializeGame();
+	board.move(b, xy);
     }
 
     @After
     public void tearDown() throws Exception {
-	board[xy.getX()][xy.getY()] = null;
     }
 
     @Test
     public void testGetPossibleMoves() throws Exception {
 	xy.setXY(0, 0);
 	setUp();
-	assertEquals(b.getPossibleMoves(board).size(), 7);
+	assertEquals(
+		"bishop moves for " + xy + " should be 0 get "
+			+ b.getPossibleMoves(board), b.getPossibleMoves(board)
+			.size(), 0);
 	tearDown();
 
 	xy.setXY(3, 3);
 	setUp();
-	assertEquals(b.getPossibleMoves(board).size(), 13);
+	assertEquals(
+		"bishop moves for " + xy + " should be 8 get "
+			+ b.getPossibleMoves(board), b.getPossibleMoves(board)
+			.size(), 8);
 	tearDown();
 
 	xy.setXY(2, 3);
 	setUp();
-	assertEquals(b.getPossibleMoves(board).size(), 11);
+	assertEquals(
+		"bishop moves for " + xy + " should be 7 get "
+			+ b.getPossibleMoves(board), b.getPossibleMoves(board)
+			.size(), 7);
 	tearDown();
 
     }
-
 }

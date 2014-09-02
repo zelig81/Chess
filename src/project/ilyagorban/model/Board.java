@@ -16,6 +16,9 @@ public class Board {
     private ArrayList<XY> xyOfBlacks = new ArrayList<>();
     private XY xyWhiteKing;
     private XY xyBlackKing;
+    private ArrayList<XY> startPositions = new ArrayList<>();
+    private ArrayList<XY> endPositions = new ArrayList<>();
+    private ArrayList<Figure> movedFigure = new ArrayList<>();
 
     public Figure[][] getBoard() {
 	return board;
@@ -68,28 +71,94 @@ public class Board {
 	board[fig.getXY().getX()][fig.getXY().getY()] = fig;
     }
 
-    public void move(XY from, XY to) {
-	Figure fig = board[from.getX()][from.getY()];
-	from.setXY(to.getX(), to.getY());
-	board[to.getX()][to.getY()] = null;
+    public void move(Figure figFrom, int x, int y) {
+	startPositions.add(new XY(figFrom.getXY()));
+	board[figFrom.getXY().getX()][figFrom.getXY().getY()] = null;
+	figFrom.getXY().setXY(x, y);
+	endPositions.add(new XY(figFrom.getXY()));
+	movedFigure.add(figFrom);
+	board[x][y] = figFrom;
+	figFrom.setTouched(true);
+    }
+
+    ArrayList<XY> getXyOfWhites() {
+	return xyOfWhites;
+    }
+
+    ArrayList<XY> getXyOfBlacks() {
+	return xyOfBlacks;
+    }
+
+    XY getXyWhiteKing() {
+	return xyWhiteKing;
+    }
+
+    XY getXyBlackKing() {
+	return xyBlackKing;
+    }
+
+    ArrayList<XY> getStartPositions() {
+	return startPositions;
+    }
+
+    ArrayList<XY> getEndPositions() {
+	return endPositions;
+    }
+
+    ArrayList<Figure> getMovedFigure() {
+	return movedFigure;
+    }
+
+    public void move(Figure figFrom, XY to) {
+	move(figFrom, to.getX(), to.getY());
+    }
+
+    public Figure getFigure(XY from) {
+	return board[from.getX()][from.getY()];
+    }
+
+    public Figure getFigure(int x, int y) {
+	return board[x][y];
+    }
+
+    public void remove(int x, int y) {
+	if (board[x][y].getRank().getOwner() == Owner.WHITE) {
+	    xyOfWhites.remove(board[x][y].getXY());
+	} else {
+	    xyOfBlacks.remove(board[x][y].getXY());
+	}
+	board[x][y] = null;
+
     }
 
     public void remove(XY xy) {
-	if (board[xy.getX()][xy.getY()].getRank().getOwner() == Owner.WHITE) {
-	    xyOfWhites.remove(board[xy.getX()][xy.getY()]);
-	} else {
-	    xyOfBlacks.remove(board[xy.getX()][xy.getY()]);
-	}
-	board[xy.getX()][xy.getY()] = null;
+	remove(xy.getX(), xy.getY());
+    }
+
+    public boolean check(XY to) {
+	return check(to.getX(), to.getY());
 
     }
 
-    public boolean check() {
-	return false;
+    private boolean check(int x, int y) {
 
+	return false;
     }
 
     public boolean mate() {
 	return false;
+    }
+
+    public static Board getInstance() {
+	return new Board();
+    }
+
+    public void castling(Figure king, XY to) {
+	int rookX = (to.getX() == 6) ? 7 : 0;
+	int newRookX = (to.getX() == 6) ? 5 : 3;
+	move(king, to);
+	move(getFigure(rookX, king.getXY().getY()), newRookX, king.getXY()
+		.getY());
+
     }
 }

@@ -41,7 +41,7 @@ public class ChessController {
 					while (success == false) {
 						String promotion = cv
 								.getInput("Your pawn is ready to be promoted. To which figure you want to promote it (r)ook/k(n)ight/(b)ishop/(q)ueen?");
-						success = cm.promote(input, promotion);
+						success = cm.promotePawn(input, promotion);
 					}
 					currentOwner = Owner.changeOwner(currentOwner);
 					break;
