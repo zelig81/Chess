@@ -38,27 +38,36 @@ public class Pawn extends Figure {
 	int direction = this.getRank().getOwner().getDirection();
 	int x = this.getXY().getX();
 	int y = this.getXY().getY();
+	boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y
+		+ direction) == null);
+	if (isAbleToGoStraightForwardOneMove == true) {
+	    output.add(new XY(x, y + direction));
+	}
+
 	boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() == false
 		&& board.getFigure(x, y + direction) == null && board
 		.getFigure(x, y + 2 * direction) == null);
 	if (isAbleToGoStraightForwardUntouchedTwoMoves == true) {
 	    output.add(new XY(x, y + 2 * direction));
 	}
-	boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y
-		+ direction) == null);
-	if (isAbleToGoStraightForwardOneMove == true) {
-	    output.add(new XY(x, y + direction));
-	}
 	// take figure
 	ArrayList<XY> removableEnemysXY = new ArrayList<>(2);
 	if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
 	    if (this.getXY().getX() != 7) {
-		removableEnemysXY.add(new XY(this.getXY().getX() + 1, this
-			.getXY().getY() + direction));
+		Figure target = board.getFigure(this.getXY().getX() + 1, this
+			.getXY().getY() + direction);
+		boolean isRemovable = (target != null && target.getRank()
+			.getOwner() != this.getRank().getOwner());
+		if (isRemovable == true)
+		    removableEnemysXY.add(target.getXY());
 	    }
-	    if (this.getXY().getY() != 0) {
-		removableEnemysXY.add(new XY(this.getXY().getX() - 1, this
-			.getXY().getY() + direction));
+	    if (this.getXY().getX() != 0) {
+		Figure target = board.getFigure(this.getXY().getX() - 1, this
+			.getXY().getY() + direction);
+		boolean isRemovable = (target != null && target.getRank()
+			.getOwner() != this.getRank().getOwner());
+		if (isRemovable == true)
+		    removableEnemysXY.add(target.getXY());
 	    }
 	}
 
