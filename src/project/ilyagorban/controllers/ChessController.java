@@ -25,24 +25,29 @@ public class ChessController {
 		break;
 
 	    int returnMessage = cm.move(input, currentOwner);
-	    if (returnMessage == CHECKMATE_TO_WHITE) {
-		// TODO make controller check/mate
+	    if (returnMessage == DRAW) {
+		cv.getMessageToView("Draw!!!!");
+	    } else if (returnMessage == CHECKMATE_TO_WHITE) {
 		cv.getMessageToView("Black wins!!!!!");
 		break;
 	    } else if (returnMessage == CHECKMATE_TO_BLACK) {
 		cv.getMessageToView("White wins!!!!!");
 		break;
-	    } else if (returnMessage == CHECK_TO_BLACK) {
-		cv.getMessageToView("White make check");
-	    } else if (returnMessage == CHECK_TO_WHITE) {
-		cv.getMessageToView("Black make check");
 	    } else {
 		switch (returnMessage) {
+		case CHECK_TO_AWAITING_SIDE:
+		    if (currentOwner == Owner.BLACK) {
+			cv.getMessageToView("White make check");
+		    } else {
+			cv.getMessageToView("Black make check");
+		    }
+		    currentOwner = currentOwner.oppositeOwner();
+		    break;
 		case CORRECT_MOVE:
-		    currentOwner = Owner.changeOwner(currentOwner);
+		    currentOwner = currentOwner.oppositeOwner();
 		    break;
 		case CASTLING:
-		    currentOwner = Owner.changeOwner(currentOwner);
+		    currentOwner = currentOwner.oppositeOwner();
 		    break;
 		case PAWN_PROMOTION:
 		    boolean success = false;
@@ -51,7 +56,10 @@ public class ChessController {
 				.getInput("Your pawn is ready to be promoted. To which figure you want to promote it (r)ook/k(n)ight/(b)ishop/(q)ueen?");
 			success = cm.promotePawn(input, promotion);
 		    }
-		    currentOwner = Owner.changeOwner(currentOwner);
+		    currentOwner = currentOwner.oppositeOwner();
+		    break;
+		case CHECK_TO_CURRENT_SIDE:
+		    cv.getMessageToView("Incorrect move - you are under check");
 		    break;
 		case INCORRECT_INPUT:
 		    cv.setMessage("incorrect input string");
@@ -62,6 +70,9 @@ public class ChessController {
 		    break;
 		case INCORRECT_MOVE:
 		    cv.setMessage("incorrect move for this figure");
+		    break;
+		default:
+		    cv.setMessage("Should not come to here");
 		    break;
 		}
 	    }
