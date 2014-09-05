@@ -3,10 +3,7 @@
  */
 package project.ilyagorban.model.figures;
 
-import static project.ilyagorban.model.ChessModel.CORRECT_MOVE;
-import static project.ilyagorban.model.ChessModel.INCORRECT_MOVE;
-import static project.ilyagorban.model.ChessModel.NO_MOVE;
-import static project.ilyagorban.model.ChessModel.OBSTACLE_ON_END_POINT;
+import static project.ilyagorban.model.ChessModel.*;
 
 import java.util.ArrayList;
 
@@ -53,10 +50,12 @@ public abstract class Figure {
 	    return OBSTACLE_ON_END_POINT;
 
 	ArrayList<XY> possibleMoves = getPossibleMoves(board);
-	if (possibleMoves.contains(to) == true)
-	    return CORRECT_MOVE;
-	else
+	if (possibleMoves.contains(to) == true) {
+	    int result = board.check(this, to);
+	    return result;
+	} else {
 	    return INCORRECT_MOVE;
+	}
     }
 
     public int[][] getDirections() {
