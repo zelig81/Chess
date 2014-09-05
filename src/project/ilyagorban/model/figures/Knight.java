@@ -8,8 +8,8 @@ public class Knight extends Figure {
 
     public Knight(XY p, Rank r) {
 	super(p, r);
-	setDirections(new int[][] { { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 },
-		{ 1, 2 }, { -1, 2 }, { 1, -2 }, { -1, -2 } });
+	setDirections(directionsOfKnight);
+	setMoveLen(1);
     }
 
 }

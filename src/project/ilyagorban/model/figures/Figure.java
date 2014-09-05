@@ -26,6 +26,17 @@ public abstract class Figure {
     private int[][] directions;
     private int moveLen;
 
+    public static final int[][] directionsOfBishop = new int[][] { { 1, 1 },
+	    { 1, -1 }, { -1, -1 }, { -1, 1 } };
+    public static final int[][] directionsOfRook = new int[][] { { 0, 1 },
+	    { 0, -1 }, { 1, 0 }, { -1, 0 } };
+    public static final int[][] directionsOfQueen = new int[][] { { 1, 0 },
+	    { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 },
+	    { 1, -1 } };
+    public static final int[][] directionsOfKnight = new int[][] { { 2, 1 },
+	    { 2, -1 }, { -2, 1 }, { -2, -1 }, { 1, 2 }, { -1, 2 }, { 1, -2 },
+	    { -1, -2 } };
+
     public Figure(XY xy, Rank r) {
 	this.xy = xy;
 	this.setRank(r);

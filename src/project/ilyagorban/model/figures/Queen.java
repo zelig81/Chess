@@ -8,8 +8,7 @@ public class Queen extends Figure {
 
     public Queen(XY p, Rank r) {
 	super(p, r);
-	setDirections(new int[][] { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 },
-		{ -1, 0 }, { -1, -1 }, { 0, -1 }, { -1, 1 } });
+	setDirections(directionsOfQueen);
 	setMoveLen(8);
     }
 

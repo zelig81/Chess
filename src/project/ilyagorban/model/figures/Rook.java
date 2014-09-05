@@ -8,7 +8,7 @@ public class Rook extends Figure {
 
     public Rook(XY p, Rank r) {
 	super(p, r);
-	setDirections(new int[][] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } });
+	setDirections(directionsOfRook);
 	setMoveLen(8);
     }
 

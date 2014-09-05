@@ -9,23 +9,25 @@ public class XY {
 	setXY(x, y);
     }
 
-    public XY(String xy) { // [e2 e4] -> 3.1 3.3
-	setXY(xy);
+    public XY(char c, char i) { // [e2e4] -> 3.1 3.3
+	setXY(c - 'a', (Character.digit(i, 10) - 1));
 
     }
 
     public static XY[] getXYfromInput(String input) {
-	String[] arrStr = input.split(" ");
-	if (arrStr.length == 2 && arrStr[0].length() == 2
-		&& arrStr[1].length() == 2 && !arrStr[0].equals(arrStr[1])) {
-	    char cFrom = arrStr[0].charAt(0);
-	    char cTo = arrStr[1].charAt(0);
+	if (input.length() != 4) {
+	    return null;
+	}
+	char[] inputChars = input.toCharArray();
+	if (!(inputChars[0] == inputChars[2] && inputChars[1] == inputChars[3])) {
+	    char cFrom = inputChars[0];
+	    char cTo = inputChars[2];
 	    if ((cFrom >= 'a' && cFrom <= 'h') && (cTo >= 'a' && cTo <= 'h')) {
-		char iFrom = arrStr[0].charAt(1);
-		char iTo = arrStr[1].charAt(1);
+		char iFrom = inputChars[1];
+		char iTo = inputChars[3];
 		if ((iFrom >= '1' && iFrom <= '8')
 			&& (iTo >= '1' && iTo <= '8')) {
-		    return new XY[] { new XY(arrStr[0]), new XY(arrStr[1]) };
+		    return new XY[] { new XY(cFrom, iFrom), new XY(cTo, iTo) };
 		}
 	    }
 	}

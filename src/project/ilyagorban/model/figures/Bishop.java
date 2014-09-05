@@ -8,7 +8,7 @@ public class Bishop extends Figure {
 
     public Bishop(XY p, Rank r) {
 	super(p, r);
-	setDirections(new int[][] { { 1, 1 }, { 1, -1 }, { -1, -1 }, { -1, 1 } });
+	setDirections(directionsOfBishop);
 	setMoveLen(8);
     }
 
