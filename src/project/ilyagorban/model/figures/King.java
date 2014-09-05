@@ -22,7 +22,7 @@ public class King extends Figure {
 	if (this.isTouched() == false) {
 	    // left and right castling check:
 	    for (int x = 0; x <= 7; x = x + 7) {
-		int stepsX = this.getXY().getX() - x;
+		int stepsX = x - this.getXY().getX();
 		int direction = stepsX / Math.abs(stepsX);
 		Figure rook = board.getFigure(this.getXY().getX(), x);
 		if (rook != null && rook.isTouched() == false) {

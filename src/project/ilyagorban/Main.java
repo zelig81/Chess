@@ -13,14 +13,19 @@ import project.ilyagorban.view.ChessView;
  */
 public class Main {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		ChessModel cm = new ChessModel();
-		ChessView cv = new ChessView();
-		ChessController cc = new ChessController(cm, cv);
-		cc.start();
-	}
+    protected static ChessModel cm;
+    protected static ChessView cv;
+    protected static ChessController cc;
+
+    public static void main(String[] args) {
+	prepareGame("console");
+	cc.start();
+    }
+
+    public static void prepareGame(String output) {
+	cm = new ChessModel();
+	cv = new ChessView(output);
+	cc = new ChessController(cm, cv);
+    }
 
 }

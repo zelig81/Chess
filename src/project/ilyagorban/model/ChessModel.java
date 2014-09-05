@@ -70,4 +70,8 @@ public class ChessModel {
     public Figure[][] getBoard() {
 	return board.getBoard();
     }
+
+    public Board getBoardObject() {
+	return board;
+    }
 }

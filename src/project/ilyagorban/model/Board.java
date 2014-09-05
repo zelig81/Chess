@@ -117,8 +117,16 @@ public class Board {
 	return board[from.getX()][from.getY()];
     }
 
+    public Figure getFigure(String in) {
+	return getFigure(in.charAt(0), in.charAt(1));
+    }
+
     public Figure getFigure(int x, int y) {
 	return board[x][y];
+    }
+
+    public Figure getFigure(char x, char y) {
+	return board[x - 'a'][(Character.digit(y, 10) - 1)];
     }
 
     public void remove(int x, int y) {

@@ -2,15 +2,15 @@ package project.ilyagorban.controllers;
 
 import project.ilyagorban.model.ChessModel;
 import project.ilyagorban.model.Owner;
-import project.ilyagorban.view.ChessView;
+import project.ilyagorban.view.Visualizable;
 import static project.ilyagorban.model.ChessModel.*;
 
 public class ChessController {
 
     private ChessModel cm;
-    private ChessView cv;
+    private Visualizable cv;
 
-    public ChessController(ChessModel cm, ChessView cv) {
+    public ChessController(ChessModel cm, Visualizable cv) {
 	this.cm = cm;
 	this.cv = cv;
     }
