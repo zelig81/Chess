@@ -12,7 +12,7 @@ public enum Owner {
 	return direction;
     }
 
-    public static Owner changeOwner(Owner o) {
-	return Owner.values()[(o.ordinal() + 1) % 2];
+    public Owner oppositeOwner() {
+	return Owner.values()[(this.ordinal() + 1) % 2];
     }
 }
