@@ -39,7 +39,7 @@ public class ChessModel {
 	if (figFrom != null && figFrom.getRank().getOwner() == o) {
 	    checkMove = figFrom.checkMove(board, to);
 
-	    if (checkMove == CORRECT_MOVE || checkMove == PAWN_PROMOTION) {
+	    if (checkMove >= CORRECT_MOVE) {
 		if (board.getFigure(to) != null) {
 		    board.remove(to);
 		}

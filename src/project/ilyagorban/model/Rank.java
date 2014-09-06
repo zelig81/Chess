@@ -31,6 +31,10 @@ public enum Rank {
 	this.index = s;
     }
 
+    public String getIndex() {
+	return index;
+    }
+
     public int getImportance() {
 	return importance;
     }

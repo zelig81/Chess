@@ -27,6 +27,7 @@ public class ChessController {
 	    int returnMessage = cm.move(input, currentOwner);
 	    if (returnMessage == DRAW) {
 		cv.getMessageToView("Draw!!!!");
+		break;
 	    } else if (returnMessage == CHECKMATE_TO_WHITE) {
 		cv.getMessageToView("Black wins!!!!!");
 		break;

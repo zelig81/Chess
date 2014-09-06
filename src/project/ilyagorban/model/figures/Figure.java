@@ -33,6 +33,11 @@ public abstract class Figure {
     public static final int[][] directionsOfKnight = new int[][] { { 2, 1 },
 	    { 2, -1 }, { -2, 1 }, { -2, -1 }, { 1, 2 }, { -1, 2 }, { 1, -2 },
 	    { -1, -2 } };
+    public static final int[][][] fourFigureDirections = { directionsOfBishop,
+	    directionsOfRook, directionsOfKnight };
+    public static final int[] fourFigureMoveLen = { 8, 8, 1 };
+    public static final String[][] fourFigureIndex = { { "q", "b" },
+	    { "q", "r" }, { "n" } };
 
     public Figure(XY xy, Rank r) {
 	this.xy = xy;
@@ -139,6 +144,30 @@ public abstract class Figure {
     @Override
     public String toString() {
 	return getRank().getPicture();
+    }
+
+    public ArrayList<XY> getPawnPossibleAttack(Board board) {
+	ArrayList<XY> output = new ArrayList<>(2);
+	int direction = this.getRank().getOwner().getDirection();
+	if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
+	    if (this.getXY().getX() != 7) {
+		Figure target = board.getFigure(this.getXY().getX() + 1, this
+			.getXY().getY() + direction);
+		boolean isRemovable = (target != null && target.getRank()
+			.getOwner() != this.getRank().getOwner());
+		if (isRemovable == true)
+		    output.add(target.getXY());
+	    }
+	    if (this.getXY().getX() != 0) {
+		Figure target = board.getFigure(this.getXY().getX() - 1, this
+			.getXY().getY() + direction);
+		boolean isRemovable = (target != null && target.getRank()
+			.getOwner() != this.getRank().getOwner());
+		if (isRemovable == true)
+		    output.add(target.getXY());
+	    }
+	}
+	return output;
     }
 
 }

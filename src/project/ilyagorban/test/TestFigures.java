@@ -19,7 +19,7 @@ public class TestFigures extends Main {
 	try {
 	    TestFigures tf = new TestFigures();
 	    tf.setUp();
-	    tf.testBishop();
+	    tf.testKing();
 	} catch (Exception e) {
 
 	}

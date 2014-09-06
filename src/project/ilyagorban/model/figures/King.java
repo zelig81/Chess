@@ -59,6 +59,42 @@ public class King extends Figure {
 		output = CASTLING;
 	}
 	return output;
+    }
+
+    public boolean isUnderAttack(Board board) {
+	boolean output = false;
+	for (int i = 0; i < 3; i++) {
+	    if (output == true)
+		break;
+	    this.setDirections(fourFigureDirections[i]);
+	    this.setMoveLen(fourFigureMoveLen[i]);
+	    ArrayList<XY> pm = this.getPossibleMoves(board);
+	    for (XY xy : pm) {
+		Figure fig = board.getFigure(xy);
+		if (fig != null) {
+		    for (String s : fourFigureIndex[i]) {
+			if (fig.getRank().getIndex().equals(s)) {
+			    output = true;
+			    break;
+			}
+		    }
+		}
+	    }
+	}
+	if (output == false) {
+	    ArrayList<XY> ppa = this.getPawnPossibleAttack(board);
+	    for (XY xy : ppa) {
+		Figure fig = board.getFigure(xy);
+		if (fig.getRank().getIndex() == "p") {
+		    output = true;
+		    break;
+		}
+	    }
+	}
+	this.setDirections(directionsOfQueen);
+	this.setMoveLen(1);
+	return output;
 
     }
+
 }

@@ -13,8 +13,6 @@ import project.ilyagorban.model.figures.Queen;
 import project.ilyagorban.model.figures.Rook;
 
 public class Board {
-    public static final String[] strFigures = { "p", "b", "n", "r", "q" };
-
     public static Board getInstance() {
 	return new Board();
     }
@@ -71,33 +69,18 @@ public class Board {
     }
 
     public int checkFromKingsPointOfView(Owner o) {
-	Figure currentKing = getFigure(xyOfKings.get(o));
-
+	King currentKing = (King) getFigure(xyOfKings.get(o));
+	boolean isUnderAttack = currentKing.isUnderAttack(this);
+	if (isUnderAttack == true) {
+	    return CHECK_TO_CURRENT_SIDE;
+	}
 	Owner oo = o.oppositeOwner();
-	Figure oppositeKing = getFigure(xyOfKings.get(oo));
-
-	for (XY xy : xyOfSides.get(o.oppositeOwner())) {
-	    if (result != CORRECT_MOVE)
-		break;
-	    Figure fig = this.getFigure(xy);
-	    ArrayList<XY> pm = fig.getPossibleMoves(this);
-	    if (pm.contains(xyOfKings.get(o))) {
-		this.moveWithoutTrace(figFrom, origXY);
-		result = CHECK_TO_CURRENT_SIDE;
-	    }
+	King oppositeKing = (King) getFigure(xyOfKings.get(oo));
+	isUnderAttack = oppositeKing.isUnderAttack(this);
+	if (isUnderAttack == true) {
+	    return CHECK_TO_AWAITING_SIDE;
 	}
-
-	for (XY xy : xyOfSides.get(o)) {
-	    if (result != CORRECT_MOVE)
-		break;
-	    Figure fig = this.getFigure(xy);
-	    ArrayList<XY> pm = fig.getPossibleMoves(this);
-	    if (pm.contains(xyOfKings.get(o.oppositeOwner()))) {
-		this.moveWithoutTrace(figFrom, origXY);
-		result = CHECK_TO_AWAITING_SIDE;
-	    }
-	}
-	return 0;
+	return CORRECT_MOVE;
 
     }
 

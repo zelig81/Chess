@@ -51,25 +51,7 @@ public class Pawn extends Figure {
 	    output.add(new XY(x, y + 2 * direction));
 	}
 	// take figure
-	ArrayList<XY> removableEnemysXY = new ArrayList<>(2);
-	if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
-	    if (this.getXY().getX() != 7) {
-		Figure target = board.getFigure(this.getXY().getX() + 1, this
-			.getXY().getY() + direction);
-		boolean isRemovable = (target != null && target.getRank()
-			.getOwner() != this.getRank().getOwner());
-		if (isRemovable == true)
-		    removableEnemysXY.add(target.getXY());
-	    }
-	    if (this.getXY().getX() != 0) {
-		Figure target = board.getFigure(this.getXY().getX() - 1, this
-			.getXY().getY() + direction);
-		boolean isRemovable = (target != null && target.getRank()
-			.getOwner() != this.getRank().getOwner());
-		if (isRemovable == true)
-		    removableEnemysXY.add(target.getXY());
-	    }
-	}
+	ArrayList<XY> removableEnemysXY = this.getPawnPossibleAttack(board);
 
 	for (XY xy : removableEnemysXY) {
 	    boolean isAbleToTakeFigure = (board.getFigure(xy) != null && board
