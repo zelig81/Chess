@@ -16,13 +16,8 @@ import project.ilyagorban.view.ChessViewTest;
 
 public class TestFigures extends Main {
     public static void main(String[] args) {
-	try {
-	    TestFigures tf = new TestFigures();
-	    tf.setUp();
-	    tf.testKing();
-	} catch (Exception e) {
-
-	}
+	System.out.println(3.5 + 0.5 * (-1));
+	System.out.println(3.5 + 0.5 * (1));
     }
 
     ChessViewTest cvt;
@@ -54,7 +49,8 @@ public class TestFigures extends Main {
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("f1");
 	assertEquals(
-		"bishop at [f1] should be able to move for 5 squares. its get "
+		"bishop at [" + fig.getXY()
+			+ "] should be able to move for 5 squares. its get "
 			+ fig.getPossibleMoves(b), fig.getPossibleMoves(b)
 			.size(), 5);
 	tearDown();
@@ -68,7 +64,8 @@ public class TestFigures extends Main {
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("e2");
 	assertEquals(
-		"bishop at [e2] should be able to move for 8 squares. its get "
+		"bishop at [" + fig.getXY()
+			+ "] should be able to move for 8 squares. its get "
 			+ fig.getPossibleMoves(b), fig.getPossibleMoves(b)
 			.size(), 8);
 	tearDown();
@@ -83,14 +80,18 @@ public class TestFigures extends Main {
 	cc.start();
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("g1");
-	assertEquals(fig.getRank()
-		+ " at [g1] should be able to move for 3 squares. its get "
-		+ fig.getPossibleMoves(b), fig.getPossibleMoves(b).size(), 3);
+	assertEquals(
+		fig.getRank() + " at [" + fig.getXY()
+			+ "] should be able to move for 3 squares. its get "
+			+ fig.getPossibleMoves(b), fig.getPossibleMoves(b)
+			.size(), 3);
 
 	fig = b.getFigure("b1");
-	assertEquals(fig.getRank()
-		+ " at [b1] should be able to move for 2 squares. its get "
-		+ fig.getPossibleMoves(b), fig.getPossibleMoves(b).size(), 2);
+	assertEquals(
+		fig.getRank() + " at [" + fig.getXY()
+			+ "] should be able to move for 2 squares. its get "
+			+ fig.getPossibleMoves(b), fig.getPossibleMoves(b)
+			.size(), 2);
 	tearDown();
 
 	setUp();
@@ -101,9 +102,9 @@ public class TestFigures extends Main {
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("c6");
 	ArrayList<XY> pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [c6] should be able to move for 5 squares. its get "
-		+ pm, pm.size(), 5);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 5 squares. its get " + pm,
+		pm.size(), 5);
 	tearDown();
     }
 
@@ -122,36 +123,48 @@ public class TestFigures extends Main {
 	cvt.addMove("d7d5");
 	cvt.addMove("exit");
 	cc.start();
+	// ░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░|░
+	// 8|▓♜▓|░♞░|▓♝▓|░♛░|▓♚▓|░♝░|▓▓▓|░♜░|8
+	// 7|░░░|▓▓▓|░♟░|▓▓▓|░♟░|▓♟▓|░░░|▓♟▓|7
+	// 6|▓▓▓|░♟░|▓▓▓|░░░|▓▓▓|░░░|▓▓▓|░♞░|6
+	// 5|░♟░|▓▓▓|░♙░|▓♟▓|░░░|▓▓▓|░♟░|▓▓▓|5
+	// 4|▓♙▓|░░░|▓▓▓|░░░|▓▓▓|░░░|▓▓▓|░♙░|4
+	// 3|░░░|▓♙▓|░░░|▓▓▓|░░░|▓▓▓|░░░|▓▓▓|3
+	// 2|▓▓▓|░░░|▓▓▓|░♙░|▓♙▓|░♙░|▓♙▓|░░░|2
+	// 1|░♖░|▓♘▓|░♗░|▓♕▓|░♔░|▓♗▓|░♘░|▓♖▓|1
+	// ░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░|░
+	// WHITE your move (for example [e2e4]) or enter [exit] to quit the
+	// game:
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("a4");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [a4] should be able to move for 0 squares. its get "
-		+ pm, pm.size(), 0);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 0 squares. its get " + pm,
+		pm.size(), 0);
 
 	fig = b.getFigure("h4");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(
-		"pawn at [h4] should be able to move for 2 squares. its get "
-			+ pm, pm.size(), 2);
+	assertEquals("pawn at [" + fig.getXY()
+		+ "] should be able to move for 2 squares. its get " + pm,
+		pm.size(), 2);
 
 	fig = b.getFigure("e7");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [e7] should be able to move for 2 squares. its get "
-		+ pm, pm.size(), 2);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 2 squares. its get " + pm,
+		pm.size(), 2);
 
 	fig = b.getFigure("b3");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [b3] should be able to move for 1 squares. its get "
-		+ pm, pm.size(), 1);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 1 squares. its get " + pm,
+		pm.size(), 1);
 
 	fig = b.getFigure("c5"); // en passante
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [e7] should be able to move for 3 squares. its get "
-		+ pm, pm.size(), 3);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 3 squares. its get " + pm,
+		pm.size(), 3);
 
 	tearDown();
 
@@ -173,27 +186,27 @@ public class TestFigures extends Main {
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("a3");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [a3] should be able to move for 2+7 squares. its get "
-		+ pm, pm.size(), 9);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 2+7 squares. its get " + pm,
+		pm.size(), 9);
 
 	fig = b.getFigure("a7");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [a7] should be able to move for 1 squares. its get "
-		+ pm, pm.size(), 1);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 1 squares. its get " + pm,
+		pm.size(), 1);
 
 	fig = b.getFigure("h2");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [h2] should be able to move for 2 squares. its get "
-		+ pm, pm.size(), 2);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 2 squares. its get " + pm,
+		pm.size(), 2);
 
 	fig = b.getFigure("h7");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [h7] should be able to move for 2 squares. its get "
-		+ pm, pm.size(), 2);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 2 squares. its get " + pm,
+		pm.size(), 2);
 
 	tearDown();
 
@@ -211,15 +224,15 @@ public class TestFigures extends Main {
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("f3");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [f3] should be able to move for 15 squares. its get "
-		+ pm, pm.size(), 15);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 15 squares. its get " + pm,
+		pm.size(), 15);
 
 	fig = b.getFigure("b6");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [b6] should be able to move for 14 squares. its get "
-		+ pm, pm.size(), 14);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 14 squares. its get " + pm,
+		pm.size(), 14);
 	tearDown();
 
     }
@@ -238,15 +251,15 @@ public class TestFigures extends Main {
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("e8");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [e8] should be able to move for 1 squares. its get "
-		+ pm, pm.size(), 1);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 1 squares. its get " + pm,
+		pm.size(), 1);
 
 	fig = b.getFigure("e1");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [b6] should be able to move for 3 squares. its get "
-		+ pm, pm.size(), 3);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 3 squares. its get " + pm,
+		pm.size(), 3);
 	tearDown();
 
 	setUp();
@@ -273,19 +286,23 @@ public class TestFigures extends Main {
 	// ░|░A░| ░B░| ░C░| ░D░|░E░| ░F░| ░G░| ░H░|░
 	// WHITE your move (for example [e2e4]) or enter [exit] to quit the
 	// game:
+	// without check for check
 	cc.start();
 	b = Main.cm.getBoardObject();
 	fig = b.getFigure("e8");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [e8] should be able to move for 2 squares. its get "
-		+ pm, pm.size(), 2);
+	assertEquals(fig.getRank() + " at [" + fig.getXY()
+		+ "] should be able to move for 2 squares. its get " + pm,
+		pm.size(), 2);
 
 	fig = b.getFigure("e1");
 	pm = fig.getPossibleMoves(b);
-	assertEquals(fig.getRank()
-		+ " at [e1] should be able to move for 2 squares. its get "
-		+ pm, pm.size(), 2);
+	assertEquals(
+		fig.getRank()
+			+ " at ["
+			+ fig.getXY()
+			+ "] should be able to move for 4 squares without check. its get "
+			+ pm, pm.size(), 4);
 	tearDown();
     }
 

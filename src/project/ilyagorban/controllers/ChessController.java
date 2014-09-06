@@ -25,15 +25,17 @@ public class ChessController {
 		break;
 
 	    int returnMessage = cm.move(input, currentOwner);
-	    if (returnMessage == DRAW) {
-		cv.getMessageToView("Draw!!!!");
-		break;
-	    } else if (returnMessage == CHECKMATE_TO_WHITE) {
-		cv.getMessageToView("Black wins!!!!!");
-		break;
-	    } else if (returnMessage == CHECKMATE_TO_BLACK) {
-		cv.getMessageToView("White wins!!!!!");
-		break;
+	    if (returnMessage > GAME_ENDINGS) {
+		if (returnMessage == DRAW) {
+		    cv.getMessageToView("Draw!!!!");
+		    break;
+		} else if (returnMessage == CHECKMATE_TO_WHITE) {
+		    cv.getMessageToView("Black wins!!!!!");
+		    break;
+		} else if (returnMessage == CHECKMATE_TO_BLACK) {
+		    cv.getMessageToView("White wins!!!!!");
+		    break;
+		}
 	    } else {
 		switch (returnMessage) {
 		case CHECK_TO_AWAITING_SIDE:
