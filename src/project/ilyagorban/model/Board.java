@@ -80,22 +80,28 @@ public class Board {
 		
 	}
 	
-	public XY xyEnPassantPossible(Figure p) {
+	public boolean isEnPassantPossible(Figure p) {
 		boolean isPawnOnRightY = (p.getXY().getY() == (int) (3.5 + 0.5 * p.getRank().getOwner().getDirection()));
 		if (isPawnOnRightY == false) {
-			return null;
+			return false;
 		}
 		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = (lastMovedFigure.getRank().getIndex().equals("p") && (Math.abs(endPositions.getY() - startPositions.getY()) == 2) && (Math.abs(endPositions.getX()
 				- p.getXY().getX()) == 1));
+		return isLastMovedFigurePawnAndInEnPassantLetalZone;
+		
+	}
+	
+	public XY xyEnPassantPossible(Figure p) {
+		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = isEnPassantPossible(p);
 		if (isLastMovedFigurePawnAndInEnPassantLetalZone) {
 			return new XY(endPositions.getX(), endPositions.getY() + p.getRank().getOwner().getDirection());
 		}
 		return null;
 	}
 	
-	public void enPassant(Figure pawnKiller, Figure pawnVictim) {
-		// TODO make board en passant
-		
+	public void enPassant(Figure pawnKiller) {
+		remove(endPositions);
+		move(pawnKiller, endPositions.getX(), endPositions.getY() + pawnKiller.getRank().getOwner().getDirection());
 	}
 	
 	public Figure[][] getBoard() {

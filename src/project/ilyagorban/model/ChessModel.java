@@ -48,7 +48,7 @@ public class ChessModel {
 			} else if (checkMove == CASTLING) {
 				board.castling(figFrom, to);
 			} else if (checkMove == EN_PASSANT) {
-				board.enPassant(figFrom, board.getLastMovedFigure());
+				board.enPassant(figFrom);
 			}
 			return checkMove;
 			

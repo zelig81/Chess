@@ -1,6 +1,7 @@
 package project.ilyagorban.model.figures;
 
 import static project.ilyagorban.model.ChessModel.CORRECT_MOVE;
+import static project.ilyagorban.model.ChessModel.EN_PASSANT;
 import static project.ilyagorban.model.ChessModel.PAWN_PROMOTION;
 
 import java.util.ArrayList;
@@ -24,6 +25,9 @@ public class Pawn extends Figure {
 			boolean isReadyToBePromoted = ((to.getY() == 7 && this.getRank().getOwner() == Owner.WHITE) || (to.getY() == 0 && this.getRank().getOwner() == Owner.BLACK));
 			if (isReadyToBePromoted) {
 				return PAWN_PROMOTION;
+			}
+			if (to.equals(board.xyEnPassantPossible(this))) {
+				return EN_PASSANT;
 			}
 		}
 		return superMethod;
