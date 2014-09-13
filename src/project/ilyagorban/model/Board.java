@@ -2,6 +2,7 @@ package project.ilyagorban.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static project.ilyagorban.model.ChessModel.*;
 import project.ilyagorban.model.figures.Bishop;
@@ -19,10 +20,13 @@ public class Board {
 	
 	private Figure[][] board = new Figure[8][8];
 	private HashMap<Owner, ArrayList<XY>> xyOfSides = new HashMap<>();
+	private HashSet<HashSet<String>> positions;
 	private HashMap<Owner, XY> xyOfKings = new HashMap<>();
 	private XY startPositions;
 	private XY endPositions;
 	private Figure lastMovedFigure;
+	private int numberOfMove;
+	private int numberOfFiftyRule;
 	
 	private Board() {
 		super();
@@ -145,6 +149,9 @@ public class Board {
 	}
 	
 	public void initializeGame() {
+		numberOfMove = 0;
+		positions = new HashSet<>();
+		numberOfFiftyRule = 0;
 		xyOfKings.put(Owner.WHITE, new XY(4, 0));
 		xyOfKings.put(Owner.BLACK, new XY(4, 7));
 		setFigureToPosition(new Rook(new XY(0, 0), Rank.WHITE_ROOK));
@@ -181,11 +188,6 @@ public class Board {
 		setFigureToPosition(new Pawn(new XY(6, 6), Rank.BLACK_PAWN));
 		setFigureToPosition(new Pawn(new XY(7, 6), Rank.BLACK_PAWN));
 		
-	}
-	
-	public boolean mate() {
-		// TODO make mate
-		return false;
 	}
 	
 	public void move(Figure figFrom, int x, int y) {
@@ -238,5 +240,145 @@ public class Board {
 	public void setFigureToPosition(Figure fig) {
 		xyOfSides.get(fig.getRank().getOwner()).add(fig.getXY());
 		board[fig.getXY().getX()][fig.getXY().getY()] = fig;
+	}
+	
+	public int assessPositions(Figure fig, XY to) {
+		int output = check(fig, to);
+		if (output >= CORRECT_MOVE) {
+			if (output != CHECK_TO_AWAITING_SIDE) {
+				output = assessDraw(fig, to);
+			}
+			
+			if (output < DRAW) {
+				output = assessMateOrStalemate(fig, to, output);
+			}
+		}
+		return output;
+	}
+	
+	/*
+	 * already known that to current side this move is correct
+	 * 
+	 * if opposite side could move without further check it's asserted that it's
+	 * not mate or stalemate so it's correct move
+	 */
+	
+	public int assessMateOrStalemate(Figure fig, XY to, int checkOutput) {
+		int output = CORRECT_MOVE;
+		XY origXY = fig.getXY();
+		Owner o = fig.getRank().getOwner();
+		moveWithoutTrace(fig, to);
+		// TODO add assessment for king of other side
+		for (XY xy : xyOfSides.get(o.oppositeOwner())) {
+			output = checkInAssessMateOrStalemate(xy);
+			if (output != CHECK_TO_CURRENT_SIDE)
+				break;
+		}
+		moveWithoutTrace(fig, origXY);
+		if (output == CHECK_TO_CURRENT_SIDE) {
+			// mate or stalemate to awaiting side
+			if (checkOutput == CORRECT_MOVE) {
+				output = DRAW_STALEMATE;
+			} else {
+				output = (o == Owner.WHITE) ? CHECKMATE_TO_BLACK : CHECKMATE_TO_WHITE;
+			}
+		}
+		// correct move
+		return output;
+		
+	}
+	
+	protected int checkInAssessMateOrStalemate(XY xy) {
+		int output = CORRECT_MOVE;
+		Figure figFromOtherSide = getFigure(xy);
+		ArrayList<XY> possibleMoves = figFromOtherSide.getPossibleMoves(this);
+		for (XY figureFromOtherSidePossibleMove : possibleMoves) {
+			output = check(figFromOtherSide, figureFromOtherSidePossibleMove);
+			if (output != CHECK_TO_CURRENT_SIDE) {
+				break;
+			}
+		}
+		return output;
+	}
+	
+	protected int assessDraw(Figure fig, XY to) {
+		if (numberOfFiftyRule >= 50) {
+			return DRAW_50_RULE;
+		} else if (positions.size() < numberOfMove - 3) {
+			return DRAW_3_FOLD_REPETITION;
+		} else if (assessImpossibilityOfMate() == true) {
+			return DRAW_IMPOSSIBILITY_OF_MATE;
+		} else
+			return CORRECT_MOVE;
+	}
+	
+	protected boolean assessImpossibilityOfMate() {
+		int importanceSum = 0;
+		int[] numFigures = { 0, 0 };
+		boolean isAllFiguresBesidesKingAreBishopsAndSameColor = true;
+		boolean isFirstBishop = true;
+		int colour = -1;
+		for (int i = 0; i < 2; i++) {
+			Owner o = Owner.values()[i];
+			for (XY xy : xyOfSides.get(o)) {
+				Figure fig = getFigure(xy);
+				Rank r = fig.getRank();
+				int importance = r.getImportance();
+				if (importance != 2)
+					return false;
+				
+				numFigures[i]++;
+				
+				if (isAllFiguresBesidesKingAreBishopsAndSameColor == true && r.getIndex().equals("b") == false) {
+					isAllFiguresBesidesKingAreBishopsAndSameColor = false;
+				}
+				if (isAllFiguresBesidesKingAreBishopsAndSameColor == true) {
+					if (isFirstBishop == true) {
+						colour = (fig.getXY().getX() + fig.getXY().getY()) % 2;
+						isFirstBishop = false;
+					} else {
+						int newColour = (fig.getXY().getX() + fig.getXY().getY()) % 2;
+						if (newColour != colour) {
+							isAllFiguresBesidesKingAreBishopsAndSameColor = false;
+						}
+					}
+				}
+				importanceSum += importance;
+			}
+		}
+		
+		if (importanceSum <= 1) {
+			// both sides have nothing or a bishop or a knight
+			return true;
+		} else if (isAllFiguresBesidesKingAreBishopsAndSameColor == true && (numFigures[0] * numFigures[1] != 0)) {
+			// All Figures Besides the King Are Bishops And Same Color and each
+			// side has at least one of them
+			return true;
+		} else
+			return false;
+		
+	}
+	
+	public void saveMove() {
+		numberOfMove++;
+		HashSet<String> thisMove = new HashSet<>();
+		thisMove.add(getStringRepresentationOfFigure(xyOfKings.get(Owner.WHITE)));
+		thisMove.add(getStringRepresentationOfFigure(xyOfKings.get(Owner.BLACK)));
+		for (XY xy : xyOfSides.get(Owner.WHITE)) {
+			thisMove.add(getStringRepresentationOfFigure(xy));
+		}
+		for (XY xy : xyOfSides.get(Owner.BLACK)) {
+			thisMove.add(getStringRepresentationOfFigure(xy));
+		}
+		positions.add(thisMove);
+	}
+	
+	private String getStringRepresentationOfFigure(XY xy) {
+		Figure fig = getFigure(xy);
+		return fig.toString() + xy.toString();
+	}
+	
+	public void resetNumberOfFiftyRule() {
+		numberOfFiftyRule = 0;
 	}
 }

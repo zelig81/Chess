@@ -37,17 +37,13 @@ public abstract class Figure {
 	}
 	
 	public int checkMove(Board board, XY to) {
-		boolean isMoveMade = !this.getXY().equals(to);
-		if (isMoveMade == false)
-			return NO_MOVE;
-		
 		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board.getFigure(to));
 		if (isEndPointEmptyOrEnemy == false)
 			return OBSTACLE_ON_END_POINT;
 		
 		ArrayList<XY> possibleMoves = getPossibleMoves(board);
 		if (possibleMoves.contains(to) == true) {
-			int result = board.check(this, to);
+			int result = board.assessPositions(this, to);
 			return result;
 		} else {
 			return INCORRECT_MOVE;

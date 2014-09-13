@@ -26,7 +26,11 @@ public class XY {
 				char iFrom = inputChars[1];
 				char iTo = inputChars[3];
 				if ((iFrom >= '1' && iFrom <= '8') && (iTo >= '1' && iTo <= '8')) {
-					return new XY[] { new XY(cFrom, iFrom), new XY(cTo, iTo) };
+					if (cFrom == cTo && iFrom == iTo) {
+						return null;
+					} else {
+						return new XY[] { new XY(cFrom, iFrom), new XY(cTo, iTo) };
+					}
 				}
 			}
 		}

@@ -58,7 +58,7 @@ public class Pawn extends Figure {
 			if (isAbleToTakeFigure == true)
 				output.add(xy);
 		}
-		// TODO make en passant
+		
 		XY xyEnPassant = board.xyEnPassantPossible(this);
 		if (xyEnPassant != null) {
 			output.add(xyEnPassant);

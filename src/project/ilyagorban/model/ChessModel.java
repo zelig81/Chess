@@ -7,7 +7,6 @@ public class ChessModel {
 	public static final int OBSTACLE_ON_WAY = -6;
 	public static final int DONT_TOUCH_NOT_YOUR_FIGURE_TO_MOVE = -5;
 	public static final int OBSTACLE_ON_END_POINT = -4;
-	public static final int NO_MOVE = -3;
 	public static final int INCORRECT_MOVE = -2;
 	public static final int INCORRECT_INPUT = -1;
 	public static final int CORRECT_MOVE = 0;
@@ -18,7 +17,11 @@ public class ChessModel {
 	public static final int GAME_ENDINGS = 100;
 	public static final int CHECKMATE_TO_WHITE = 101;
 	public static final int CHECKMATE_TO_BLACK = 102;
-	public static final int DRAW = 103;
+	public static final int DRAW = 200;
+	public static final int DRAW_50_RULE = 203;
+	public static final int DRAW_3_FOLD_REPETITION = 204;
+	public static final int DRAW_IMPOSSIBILITY_OF_MATE = 205;
+	public static final int DRAW_STALEMATE = 206;
 	
 	private static Board board;
 	
@@ -41,8 +44,12 @@ public class ChessModel {
 			checkMove = figFrom.checkMove(board, to);
 			
 			if (checkMove >= CORRECT_MOVE) {
+				if (figFrom.getRank().getIndex().equals("p")) { // pawn move
+					board.resetNumberOfFiftyRule();
+				}
 				if (board.getFigure(to) != null) {
 					board.remove(to);
+					board.resetNumberOfFiftyRule();
 				}
 				board.move(figFrom, to);
 			} else if (checkMove == CASTLING) {
@@ -74,5 +81,10 @@ public class ChessModel {
 	
 	public Board getBoardObject() {
 		return board;
+	}
+	
+	public void saveMove() {
+		board.saveMove();
+		
 	}
 }
