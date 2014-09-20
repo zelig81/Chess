@@ -25,9 +25,9 @@ public class ChessModel {
 	
 	private static Board board;
 	
-	public void initializeGame() {
+	public boolean initializeGame() {
 		board = Board.getInstance();
-		board.initializeGame();
+		return board.initializeGame();
 	}
 	
 	public int move(String input, Owner o) {

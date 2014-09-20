@@ -5,13 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import static project.ilyagorban.model.ChessModel.*;
-import project.ilyagorban.model.figures.Bishop;
 import project.ilyagorban.model.figures.Figure;
 import project.ilyagorban.model.figures.King;
-import project.ilyagorban.model.figures.Knight;
-import project.ilyagorban.model.figures.Pawn;
-import project.ilyagorban.model.figures.Queen;
-import project.ilyagorban.model.figures.Rook;
 
 public class Board {
 	public static Board getInstance() {
@@ -19,19 +14,52 @@ public class Board {
 	}
 	
 	private Figure[][] board = new Figure[8][8];
-	private HashMap<Owner, ArrayList<XY>> xyOfSides = new HashMap<>();
-	private HashSet<HashSet<String>> positions;
-	private HashMap<Owner, XY> xyOfKings = new HashMap<>();
+	private HashMap<Owner, ArrayList<XY>> xyOfSides;
+	private HashSet<HashSet<String>> log;
+	private HashMap<Owner, XY> xyOfKings;
 	private XY startPositions;
 	private XY endPositions;
 	private Figure lastMovedFigure;
 	private int numberOfMove;
 	private int numberOfFiftyRule;
+	private static final ArrayList<String> startGamePositions = new ArrayList<>();
+	static {
+		startGamePositions.add("wr00");
+		startGamePositions.add("wn10");
+		startGamePositions.add("wb20");
+		startGamePositions.add("wq30");
+		startGamePositions.add("wk40");
+		startGamePositions.add("wb50");
+		startGamePositions.add("wn60");
+		startGamePositions.add("wr70");
+		startGamePositions.add("wp01");
+		startGamePositions.add("wp11");
+		startGamePositions.add("wp21");
+		startGamePositions.add("wp31");
+		startGamePositions.add("wp41");
+		startGamePositions.add("wp51");
+		startGamePositions.add("wp61");
+		startGamePositions.add("wp71");
+		
+		startGamePositions.add("br07");
+		startGamePositions.add("bn17");
+		startGamePositions.add("bb27");
+		startGamePositions.add("bq37");
+		startGamePositions.add("bk47");
+		startGamePositions.add("bb57");
+		startGamePositions.add("bn67");
+		startGamePositions.add("br77");
+		startGamePositions.add("bp06");
+		startGamePositions.add("bp16");
+		startGamePositions.add("bp26");
+		startGamePositions.add("bp36");
+		startGamePositions.add("bp46");
+		startGamePositions.add("bp56");
+		startGamePositions.add("bp66");
+		startGamePositions.add("bp76");
+	}
 	
 	private Board() {
-		super();
-		xyOfSides.put(Owner.WHITE, new ArrayList<XY>());
-		xyOfSides.put(Owner.BLACK, new ArrayList<XY>());
 	}
 	
 	public void castling(Figure king, XY to) {
@@ -148,46 +176,49 @@ public class Board {
 		return xyOfSides.get(o);
 	}
 	
-	public void initializeGame() {
+	public boolean initializeGame(int numberOfMove, HashSet<HashSet<String>> log, int numberOfFiftyRule, ArrayList<String> startGamePositions) {
+		this.numberOfMove = numberOfMove;
+		this.log = log;
+		boolean output = true;
+		xyOfKings = new HashMap<>();
+		xyOfSides = new HashMap<>();
+		xyOfSides.put(Owner.WHITE, new ArrayList<XY>());
+		xyOfSides.put(Owner.BLACK, new ArrayList<XY>());
+		for (String startGamePosition : startGamePositions) {
+			output = setFigureToPosition(startGamePosition);
+			System.out.println(output + " is result of setFigureToPosition");
+			if (output == false) {
+				break;
+			}
+		}
+		return output;
+		
+	}
+	
+	public boolean setFigureToPosition(String startGamePosition) {
+		Figure fig = Figure.newInstance(startGamePosition);
+		if (fig == null) {
+			return false;
+		}
+		boolean isXYAlreadyPresent = xyOfSides.get(Owner.BLACK).contains(fig.getXY()) || xyOfSides.get(Owner.WHITE).contains(fig.getXY()) || xyOfKings.containsValue(fig.getXY());
+		if (isXYAlreadyPresent == true) {
+			return false;
+		}
+		if (fig instanceof King) {
+			if (xyOfKings.get(fig.getRank().getOwner()) != null) {
+				return false;
+			}
+			xyOfKings.put(fig.getRank().getOwner(), fig.getXY());
+		}
+		setFigureToPosition(fig);
+		return true;
+	}
+	
+	public boolean initializeGame() {
 		numberOfMove = 0;
-		positions = new HashSet<>();
+		log = new HashSet<>();
 		numberOfFiftyRule = 0;
-		xyOfKings.put(Owner.WHITE, new XY(4, 0));
-		xyOfKings.put(Owner.BLACK, new XY(4, 7));
-		setFigureToPosition(new Rook(new XY(0, 0), Rank.WHITE_ROOK));
-		setFigureToPosition(new Knight(new XY(1, 0), Rank.WHITE_KNIGHT));
-		setFigureToPosition(new Bishop(new XY(2, 0), Rank.WHITE_BISHOP));
-		setFigureToPosition(new Queen(new XY(3, 0), Rank.WHITE_QUEEN));
-		setFigureToPosition(new King(xyOfKings.get(Owner.WHITE), Rank.WHITE_KING));
-		setFigureToPosition(new Bishop(new XY(5, 0), Rank.WHITE_BISHOP));
-		setFigureToPosition(new Knight(new XY(6, 0), Rank.WHITE_KNIGHT));
-		setFigureToPosition(new Rook(new XY(7, 0), Rank.WHITE_ROOK));
-		setFigureToPosition(new Pawn(new XY(0, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(1, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(2, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(3, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(4, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(5, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(6, 1), Rank.WHITE_PAWN));
-		setFigureToPosition(new Pawn(new XY(7, 1), Rank.WHITE_PAWN));
-		
-		setFigureToPosition(new Rook(new XY(0, 7), Rank.BLACK_ROOK));
-		setFigureToPosition(new Knight(new XY(1, 7), Rank.BLACK_KNIGHT));
-		setFigureToPosition(new Bishop(new XY(2, 7), Rank.BLACK_BISHOP));
-		setFigureToPosition(new Queen(new XY(3, 7), Rank.BLACK_QUEEN));
-		setFigureToPosition(new King(xyOfKings.get(Owner.BLACK), Rank.BLACK_KING));
-		setFigureToPosition(new Bishop(new XY(5, 7), Rank.BLACK_BISHOP));
-		setFigureToPosition(new Knight(new XY(6, 7), Rank.BLACK_KNIGHT));
-		setFigureToPosition(new Rook(new XY(7, 7), Rank.BLACK_ROOK));
-		setFigureToPosition(new Pawn(new XY(0, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(1, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(2, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(3, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(4, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(5, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(6, 6), Rank.BLACK_PAWN));
-		setFigureToPosition(new Pawn(new XY(7, 6), Rank.BLACK_PAWN));
-		
+		return initializeGame(numberOfMove, log, numberOfFiftyRule, startGamePositions);
 	}
 	
 	public void move(Figure figFrom, int x, int y) {
@@ -304,7 +335,7 @@ public class Board {
 	protected int assessDraw(Figure fig, XY to) {
 		if (numberOfFiftyRule >= 50) {
 			return DRAW_50_RULE;
-		} else if (positions.size() < numberOfMove - 3) {
+		} else if (log.size() < numberOfMove - 3) {
 			return DRAW_3_FOLD_REPETITION;
 		} else if (assessImpossibilityOfMate() == true) {
 			return DRAW_IMPOSSIBILITY_OF_MATE;
@@ -370,7 +401,7 @@ public class Board {
 		for (XY xy : xyOfSides.get(Owner.BLACK)) {
 			thisMove.add(getStringRepresentationOfFigure(xy));
 		}
-		positions.add(thisMove);
+		log.add(thisMove);
 	}
 	
 	private String getStringRepresentationOfFigure(XY xy) {

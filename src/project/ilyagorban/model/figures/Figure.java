@@ -153,4 +153,40 @@ public abstract class Figure {
 		return output;
 	}
 	
+	public static Figure newInstance(String startGamePosition) {
+		System.out.println(startGamePosition);
+		if (startGamePosition.length() != 4) {
+			return null;
+		}
+		String[] aChar = startGamePosition.split("");
+		XY xy = XY.getXYFromLog(startGamePosition);
+		if (xy == null) {
+			return null;
+		}
+		Owner owner = Owner.getOwner(aChar[0]);
+		if (owner == null) {
+			return null;
+		}
+		Rank rank = Rank.getRank(aChar[1], owner);
+		if (rank == null) {
+			return null;
+		}
+		System.out.println(aChar[0] + aChar[1] + " is made");
+		switch (aChar[1]) {
+			case "p":
+				return new Pawn(xy, rank);
+			case "n":
+				return new Knight(xy, rank);
+			case "b":
+				return new Bishop(xy, rank);
+			case "r":
+				return new Rook(xy, rank);
+			case "q":
+				return new Queen(xy, rank);
+			case "k":
+				return new King(xy, rank);
+			default:
+				return null;
+		}
+	}
 }

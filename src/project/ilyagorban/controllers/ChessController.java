@@ -16,7 +16,11 @@ public class ChessController {
 	}
 	
 	public void start() {
-		cm.initializeGame();
+		boolean isGameStarted = cm.initializeGame();
+		if (isGameStarted == false) {
+			System.out.println("the game is not started");
+			return;
+		}
 		Owner currentOwner = Owner.WHITE;
 		while (true) {
 			String input = cv.showBoard(cm.getBoard(), currentOwner);
@@ -73,5 +77,4 @@ public class ChessController {
 			}
 		}
 	}
-	
 }

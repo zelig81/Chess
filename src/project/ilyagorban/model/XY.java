@@ -42,6 +42,24 @@ public class XY {
 		this.y = xy.y;
 	}
 	
+	public static XY getXYFromLog(String log) {
+		int x, y;
+		String[] aLog = log.split("");
+		try {
+			x = Integer.parseInt(aLog[2]);
+			y = Integer.parseInt(aLog[3]);
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (x < 0 || x > 7 || y < 0 || y > 7) {
+			return null;
+		} else {
+			return new XY(x, y);
+		}
+		
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (o == null) {
