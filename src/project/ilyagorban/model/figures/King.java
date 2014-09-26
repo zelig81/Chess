@@ -19,19 +19,21 @@ public class King extends Figure {
 	@Override
 	public ArrayList<XY> getPossibleMoves(Board board) {
 		ArrayList<XY> output = super.getPossibleMoves(board);
+		int kingX = this.getXY().getX();
+		int kingY = this.getXY().getY();
 		
 		boolean isUntouchedKing = this.getRank().getIndex().equals("k") && this.isTouched() == false;
 		if (isUntouchedKing == true) {
 			// left and right castling check:
 			for (int x = 0; x <= 7; x = x + 7) {
-				int stepsX = x - this.getXY().getX();
+				int stepsX = x - kingX;
 				int direction = stepsX / Math.abs(stepsX);
-				Figure rook = board.getFigure(x, this.getXY().getY());
+				Figure rook = board.getFigure(x, kingY);
 				if (rook != null && rook.isTouched() == false) {
 					boolean isAbleToCastle = true;
 					for (int i = 1; i < Math.abs(stepsX); i++) {
-						int newX = this.getXY().getX() + i * direction;
-						Figure fig = board.getFigure(newX, this.getXY().getY());
+						int newX = kingX + i * direction;
+						Figure fig = board.getFigure(newX, kingY);
 						boolean isEmpty = (fig == null);
 						if (isEmpty) {
 							continue;
@@ -41,7 +43,7 @@ public class King extends Figure {
 						}
 					}
 					if (isAbleToCastle == true)
-						output.add(XY.getNewXY(this.getXY().getX() + direction * 2, this.getXY().getY()));
+						output.add(XY.getNewXY(kingX + direction * 2, kingY));
 				}
 			}
 		}
@@ -55,7 +57,8 @@ public class King extends Figure {
 		if (output < CORRECT_MOVE)
 			return output;
 		else {
-			if (Math.abs(this.getXY().getX() - to.getX()) == 2)
+			boolean isAbleToCastle = Math.abs(this.getXY().getX() - to.getX()) == 2;
+			if (isAbleToCastle)
 				output = CASTLING;
 		}
 		return output;
@@ -69,6 +72,10 @@ public class King extends Figure {
 			this.setDirections(fourFigureDirections[i]);
 			this.setMoveLen(fourFigureMoveLen[i]);
 			ArrayList<XY> pm = this.getPossibleMoves(board);
+			if (pm == null) {
+				System.out.println(this.toLog());
+				break;
+			}
 			if (pm.size() != 0)
 				for (XY xy : pm) {
 					Figure fig = board.getFigure(xy);
