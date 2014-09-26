@@ -70,9 +70,10 @@ public abstract class Figure {
 					break;
 				int newX = thisX + dir[0] * i;
 				int newY = thisY + dir[1] * i;
-				if (newX < 0 || newX > 7 || newY < 0 || newY > 7)
+				XY xy = XY.getNewXY(newX, newY);
+				if (xy == null) {
 					break;
-				XY xy = new XY(newX, newY);
+				}
 				i++;
 				Figure fig = board.getFigure(newX, newY);
 				if (fig == null) {
