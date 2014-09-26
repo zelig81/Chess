@@ -24,39 +24,39 @@ public class Board {
 	private int numberOfFiftyRule;
 	private static final ArrayList<String> startGamePositions = new ArrayList<>();
 	static {
-		startGamePositions.add("wr00");
-		startGamePositions.add("wn10");
-		startGamePositions.add("wb20");
-		startGamePositions.add("wq30");
-		startGamePositions.add("wk40");
-		startGamePositions.add("wb50");
-		startGamePositions.add("wn60");
-		startGamePositions.add("wr70");
-		startGamePositions.add("wp01");
-		startGamePositions.add("wp11");
-		startGamePositions.add("wp21");
-		startGamePositions.add("wp31");
-		startGamePositions.add("wp41");
-		startGamePositions.add("wp51");
-		startGamePositions.add("wp61");
-		startGamePositions.add("wp71");
+		startGamePositions.add("wra1");
+		startGamePositions.add("wnb1");
+		startGamePositions.add("wbc1");
+		startGamePositions.add("wqd1");
+		startGamePositions.add("wke1");
+		startGamePositions.add("wbf1");
+		startGamePositions.add("wng1");
+		startGamePositions.add("wrh1");
+		startGamePositions.add("wpa2");
+		startGamePositions.add("wpb2");
+		startGamePositions.add("wpc2");
+		startGamePositions.add("wpd2");
+		startGamePositions.add("wpe2");
+		startGamePositions.add("wpf2");
+		startGamePositions.add("wpg2");
+		startGamePositions.add("wph2");
 		
-		startGamePositions.add("br07");
-		startGamePositions.add("bn17");
-		startGamePositions.add("bb27");
-		startGamePositions.add("bq37");
-		startGamePositions.add("bk47");
-		startGamePositions.add("bb57");
-		startGamePositions.add("bn67");
-		startGamePositions.add("br77");
-		startGamePositions.add("bp06");
-		startGamePositions.add("bp16");
-		startGamePositions.add("bp26");
-		startGamePositions.add("bp36");
-		startGamePositions.add("bp46");
-		startGamePositions.add("bp56");
-		startGamePositions.add("bp66");
-		startGamePositions.add("bp76");
+		startGamePositions.add("bra8");
+		startGamePositions.add("bnb8");
+		startGamePositions.add("bbc8");
+		startGamePositions.add("bqd8");
+		startGamePositions.add("bke8");
+		startGamePositions.add("bbf8");
+		startGamePositions.add("bng8");
+		startGamePositions.add("brh8");
+		startGamePositions.add("bpa7");
+		startGamePositions.add("bpb7");
+		startGamePositions.add("bpc7");
+		startGamePositions.add("bpd7");
+		startGamePositions.add("bpe7");
+		startGamePositions.add("bpf7");
+		startGamePositions.add("bpg7");
+		startGamePositions.add("bph7");
 	}
 	
 	private Board() {
@@ -174,15 +174,13 @@ public class Board {
 		int result = CORRECT_MOVE;
 		moveWithoutTrace(figFrom, to);
 		
-		if (origXY.equals(xyOfKings.get(o))) {
-			xyOfKings.put(o, to);
+		if (to.equals(xyOfKings.get(o))) {
 			boolean isKingsNotOnNeighborSquares = Math.abs(xyOfKings.get(w).getX() - xyOfKings.get(b).getX()) > 1 && Math.abs(xyOfKings.get(w).getY() - xyOfKings.get(b).getY()) > 1;
 			if (isKingsNotOnNeighborSquares == false) {
 				result = INCORRECT_MOVE;
 			} else {
 				result = checkFromKingsPointOfView(o);
 			}
-			xyOfKings.put(o, origXY);
 		} else {
 			result = checkFromKingsPointOfView(o);
 		}
@@ -247,6 +245,9 @@ public class Board {
 	}
 	
 	public Figure getFigure(XY from) {
+		if (from == null) {
+			return null;
+		}
 		return board[from.getX()][from.getY()];
 	}
 	
@@ -259,6 +260,9 @@ public class Board {
 	}
 	
 	private String getStringRepresentationOfFigure(XY xy) {
+		if (xy == null) {
+			return null;
+		}
 		Figure fig = getFigure(xy);
 		return fig.toString() + xy.toString();
 	}
