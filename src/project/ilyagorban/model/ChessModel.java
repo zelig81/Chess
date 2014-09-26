@@ -6,7 +6,6 @@ public class ChessModel {
 	public static final int CHECK_TO_CURRENT_SIDE = -7;
 	public static final int OBSTACLE_ON_WAY = -6;
 	public static final int DONT_TOUCH_NOT_YOUR_FIGURE_TO_MOVE = -5;
-	public static final int OBSTACLE_ON_END_POINT = -4;
 	public static final int INCORRECT_MOVE = -2;
 	public static final int INCORRECT_INPUT = -1;
 	public static final int CORRECT_MOVE = 0;
@@ -40,22 +39,24 @@ public class ChessModel {
 		int checkMove = INCORRECT_MOVE;
 		Figure figFrom = board.getFigure(from);
 		
-		if (figFrom != null && figFrom.getRank().getOwner() == o) {
+		if (figFrom != null && figFrom.isEnemy(o) == false) {
 			checkMove = figFrom.checkMove(board, to);
 			
 			if (checkMove >= CORRECT_MOVE) {
 				if (figFrom.getRank().getIndex().equals("p")) { // pawn move
 					board.resetNumberOfFiftyRule();
 				}
-				if (board.getFigure(to) != null) {
-					board.remove(to);
-					board.resetNumberOfFiftyRule();
+				if (checkMove == CORRECT_MOVE) {
+					if (board.getFigure(to) != null) {
+						board.remove(to);
+						board.resetNumberOfFiftyRule();
+					}
+					board.move(figFrom, to);
+				} else if (checkMove == CASTLING) {
+					board.castling(figFrom, to);
+				} else if (checkMove == EN_PASSANT) {
+					board.enPassant(figFrom);
 				}
-				board.move(figFrom, to);
-			} else if (checkMove == CASTLING) {
-				board.castling(figFrom, to);
-			} else if (checkMove == EN_PASSANT) {
-				board.enPassant(figFrom);
 			}
 			return checkMove;
 			

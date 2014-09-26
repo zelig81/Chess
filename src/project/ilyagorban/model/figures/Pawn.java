@@ -22,7 +22,7 @@ public class Pawn extends Figure {
 	public int checkMove(Board board, XY to) {
 		int superMethod = super.checkMove(board, to);
 		if (superMethod == CORRECT_MOVE) {
-			boolean isReadyToBePromoted = ((to.getY() == 7 && this.getRank().getOwner() == Owner.WHITE) || (to.getY() == 0 && this.getRank().getOwner() == Owner.BLACK));
+			boolean isReadyToBePromoted = ((to.getY() == 7 && this.isEnemy(Owner.BLACK)) || (to.getY() == 0 && this.isEnemy(Owner.WHITE)));
 			if (isReadyToBePromoted) {
 				return PAWN_PROMOTION;
 			}
@@ -53,7 +53,7 @@ public class Pawn extends Figure {
 		ArrayList<XY> removableEnemysXY = this.getPawnPossibleAttack(board);
 		
 		for (XY xy : removableEnemysXY) {
-			boolean isAbleToTakeFigure = (board.getFigure(xy) != null && board.getFigure(xy).getRank().getOwner() != this.getRank().getOwner());
+			boolean isAbleToTakeFigure = (board.getFigure(xy) != null && board.getFigure(xy).isEnemy(this));
 			
 			if (isAbleToTakeFigure == true)
 				output.add(xy);

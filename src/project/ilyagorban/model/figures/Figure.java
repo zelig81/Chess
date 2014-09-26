@@ -39,7 +39,7 @@ public abstract class Figure {
 	public int checkMove(Board board, XY to) {
 		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board.getFigure(to));
 		if (isEndPointEmptyOrEnemy == false)
-			return OBSTACLE_ON_END_POINT;
+			return OBSTACLE_ON_WAY;
 		
 		ArrayList<XY> possibleMoves = getPossibleMoves(board);
 		if (possibleMoves.contains(to) == true) {
@@ -79,7 +79,7 @@ public abstract class Figure {
 					output.add(xy);
 					continue;
 				}
-				if (fig.getRank().getOwner() != this.getRank().getOwner())
+				if (this.isEnemy(fig))
 					output.add(xy);
 				break;
 				
@@ -98,7 +98,7 @@ public abstract class Figure {
 	}
 	
 	protected boolean isEndPointEmptyOrEnemy(Owner o, Figure figTo) {
-		boolean result = (figTo == null || figTo.getRank().getOwner() != o);
+		boolean result = (figTo == null || figTo.isEnemy(o));
 		return result;
 		
 	}
@@ -139,13 +139,13 @@ public abstract class Figure {
 		if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
 			if (this.getXY().getX() != 7) {
 				Figure target = board.getFigure(this.getXY().getX() + 1, this.getXY().getY() + direction);
-				boolean isRemovable = (target != null && target.getRank().getOwner() != this.getRank().getOwner());
+				boolean isRemovable = (target != null && this.isEnemy(target));
 				if (isRemovable == true)
 					output.add(target.getXY());
 			}
 			if (this.getXY().getX() != 0) {
 				Figure target = board.getFigure(this.getXY().getX() - 1, this.getXY().getY() + direction);
-				boolean isRemovable = (target != null && target.getRank().getOwner() != this.getRank().getOwner());
+				boolean isRemovable = (target != null && this.isEnemy(target));
 				if (isRemovable == true)
 					output.add(target.getXY());
 			}
@@ -154,7 +154,6 @@ public abstract class Figure {
 	}
 	
 	public static Figure newInstance(String startGamePosition) {
-		System.out.println(startGamePosition);
 		if (startGamePosition.length() != 4) {
 			return null;
 		}
@@ -171,7 +170,6 @@ public abstract class Figure {
 		if (rank == null) {
 			return null;
 		}
-		System.out.println(aChar[0] + aChar[1] + " is made");
 		switch (aChar[1]) {
 			case "p":
 				return new Pawn(xy, rank);
@@ -188,5 +186,19 @@ public abstract class Figure {
 			default:
 				return null;
 		}
+	}
+	
+	public boolean isEnemy(Figure fig) {
+		if (fig == null) {
+			return false;
+		}
+		return this.getRank().getOwner() != fig.getRank().getOwner();
+	}
+	
+	public boolean isEnemy(Owner o) {
+		if (o == null) {
+			return false;
+		}
+		return this.getRank().getOwner() != o;
 	}
 }

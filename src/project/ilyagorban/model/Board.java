@@ -64,9 +64,10 @@ public class Board {
 	
 	public void castling(Figure king, XY to) {
 		int rookX = (to.getX() == 6) ? 7 : 0;
+		int kingY = king.getXY().getY();
 		int newRookX = (to.getX() == 6) ? 5 : 3;
 		move(king, to);
-		move(getFigure(rookX, king.getXY().getY()), newRookX, king.getXY().getY());
+		move(getFigure(rookX, kingY), newRookX, kingY);
 		
 	}
 	
@@ -91,7 +92,7 @@ public class Board {
 			result = checkFromKingsPointOfView(o);
 		}
 		
-		this.moveWithoutTrace(figFrom, origXY);
+		moveWithoutTrace(figFrom, origXY);
 		return result;
 		
 	}
@@ -186,7 +187,6 @@ public class Board {
 		xyOfSides.put(Owner.BLACK, new ArrayList<XY>());
 		for (String startGamePosition : startGamePositions) {
 			output = setFigureToPosition(startGamePosition);
-			System.out.println(output + " is result of setFigureToPosition");
 			if (output == false) {
 				break;
 			}
@@ -234,6 +234,7 @@ public class Board {
 	
 	public void move(Figure figFrom, XY to) {
 		move(figFrom, to.getX(), to.getY());
+		figFrom.setTouched(true);
 	}
 	
 	public void moveWithoutTrace(Figure figFrom, int x, int y) {
@@ -244,7 +245,6 @@ public class Board {
 			xyOfKings.get(o).setXY(x, y);
 		}
 		board[x][y] = figFrom;
-		figFrom.setTouched(true);
 	}
 	
 	public void moveWithoutTrace(Figure figFrom, XY to) {

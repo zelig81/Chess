@@ -40,7 +40,7 @@ public class ChessController {
 					cv.getMessageToView("White wins!!!!!");
 					break; // end of game
 				}
-			} else {
+			} else if (returnMessage >= CORRECT_MOVE) {
 				switch (returnMessage) {
 					case CHECK_TO_AWAITING_SIDE:
 						if (currentOwner == Owner.BLACK) {
@@ -56,6 +56,12 @@ public class ChessController {
 							success = cm.promotePawn(input, promotion);
 						}
 						break;
+				}
+				
+				cm.saveMove();
+				currentOwner = currentOwner.oppositeOwner();
+			} else {
+				switch (returnMessage) {
 					case CHECK_TO_CURRENT_SIDE:
 						cv.getMessageToView("Incorrect move - you are under check");
 						break;
@@ -68,12 +74,11 @@ public class ChessController {
 					case INCORRECT_MOVE:
 						cv.setMessage("incorrect move for this figure");
 						break;
+					case OBSTACLE_ON_WAY:
+						cv.setMessage("there is an unpassable obstacle on the end point of your move");
+						break;
 				}
 				
-				if (returnMessage >= CORRECT_MOVE) {
-					cm.saveMove();
-					currentOwner = currentOwner.oppositeOwner();
-				}
 			}
 		}
 	}
