@@ -56,4 +56,8 @@ public enum Rank {
 	public String toString() {
 		return picture;
 	}
+	
+	public String toLog() {
+		return owner.getLetter() + index;
+	}
 }
