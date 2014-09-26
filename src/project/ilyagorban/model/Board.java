@@ -62,276 +62,6 @@ public class Board {
 	private Board() {
 	}
 	
-	public void castling(Figure king, XY to) {
-		int rookX = (to.getX() == 6) ? 7 : 0;
-		int kingY = king.getXY().getY();
-		int newRookX = (to.getX() == 6) ? 5 : 3;
-		move(king, to);
-		move(getFigure(rookX, kingY), newRookX, kingY);
-		
-	}
-	
-	public int check(Figure figFrom, XY to) {
-		Owner w = Owner.WHITE;
-		Owner b = Owner.BLACK;
-		Owner o = figFrom.getRank().getOwner();
-		XY origXY = new XY(figFrom.getXY());
-		int result = CORRECT_MOVE;
-		moveWithoutTrace(figFrom, to);
-		
-		if (origXY.equals(xyOfKings.get(o))) {
-			xyOfKings.put(o, to);
-			boolean isKingsNotOnNeighborSquares = Math.abs(xyOfKings.get(w).getX() - xyOfKings.get(b).getX()) > 1 && Math.abs(xyOfKings.get(w).getY() - xyOfKings.get(b).getY()) > 1;
-			if (isKingsNotOnNeighborSquares == false) {
-				result = INCORRECT_MOVE;
-			} else {
-				result = checkFromKingsPointOfView(o);
-			}
-			xyOfKings.put(o, origXY);
-		} else {
-			result = checkFromKingsPointOfView(o);
-		}
-		
-		moveWithoutTrace(figFrom, origXY);
-		return result;
-		
-	}
-	
-	public int checkFromKingsPointOfView(Owner o) {
-		King currentKing = (King) getFigure(xyOfKings.get(o));
-		boolean isUnderAttack = currentKing.isUnderAttack(this);
-		if (isUnderAttack == true) {
-			return CHECK_TO_CURRENT_SIDE;
-		}
-		Owner oo = o.oppositeOwner();
-		King oppositeKing = (King) getFigure(xyOfKings.get(oo));
-		isUnderAttack = oppositeKing.isUnderAttack(this);
-		if (isUnderAttack == true) {
-			return CHECK_TO_AWAITING_SIDE;
-		}
-		return CORRECT_MOVE;
-		
-	}
-	
-	public boolean isEnPassantPossible(Figure p) {
-		boolean isPawnOnRightY = (p.getXY().getY() == (int) (3.5 + 0.5 * p.getRank().getOwner().getDirection()));
-		if (isPawnOnRightY == false) {
-			return false;
-		}
-		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = (lastMovedFigure.getRank().getIndex().equals("p") && (Math.abs(endPositions.getY() - startPositions.getY()) == 2) && (Math.abs(endPositions.getX()
-				- p.getXY().getX()) == 1));
-		return isLastMovedFigurePawnAndInEnPassantLetalZone;
-		
-	}
-	
-	public XY xyEnPassantPossible(Figure p) {
-		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = isEnPassantPossible(p);
-		if (isLastMovedFigurePawnAndInEnPassantLetalZone) {
-			return new XY(endPositions.getX(), endPositions.getY() + p.getRank().getOwner().getDirection());
-		}
-		return null;
-	}
-	
-	public void enPassant(Figure pawnKiller) {
-		remove(endPositions);
-		move(pawnKiller, endPositions.getX(), endPositions.getY() + pawnKiller.getRank().getOwner().getDirection());
-	}
-	
-	public Figure[][] getBoard() {
-		return board;
-	}
-	
-	public XY getEndPositions() {
-		return endPositions;
-	}
-	
-	public Figure getFigure(char x, char y) {
-		return board[x - 'a'][(Character.digit(y, 10) - 1)];
-	}
-	
-	public Figure getFigure(int x, int y) {
-		return board[x][y];
-	}
-	
-	public Figure getFigure(String in) {
-		return getFigure(in.charAt(0), in.charAt(1));
-	}
-	
-	public Figure getFigure(XY from) {
-		return board[from.getX()][from.getY()];
-	}
-	
-	public Figure getLastMovedFigure() {
-		return lastMovedFigure;
-	}
-	
-	public XY getStartPositions() {
-		return startPositions;
-	}
-	
-	public XY getXyOfKing(Owner o) {
-		return xyOfKings.get(o);
-	}
-	
-	public ArrayList<XY> getXyOfSides(Owner o) {
-		return xyOfSides.get(o);
-	}
-	
-	public boolean initializeGame(int numberOfMove, HashSet<HashSet<String>> log, int numberOfFiftyRule, ArrayList<String> startGamePositions) {
-		this.numberOfMove = numberOfMove;
-		this.log = log;
-		boolean output = true;
-		xyOfKings = new HashMap<>();
-		xyOfSides = new HashMap<>();
-		xyOfSides.put(Owner.WHITE, new ArrayList<XY>());
-		xyOfSides.put(Owner.BLACK, new ArrayList<XY>());
-		for (String startGamePosition : startGamePositions) {
-			output = setFigureToPosition(startGamePosition);
-			if (output == false) {
-				break;
-			}
-		}
-		return output;
-		
-	}
-	
-	public boolean setFigureToPosition(String startGamePosition) {
-		Figure fig = Figure.newInstance(startGamePosition);
-		if (fig == null) {
-			return false;
-		}
-		boolean isXYAlreadyPresent = xyOfSides.get(Owner.BLACK).contains(fig.getXY()) || xyOfSides.get(Owner.WHITE).contains(fig.getXY()) || xyOfKings.containsValue(fig.getXY());
-		if (isXYAlreadyPresent == true) {
-			return false;
-		}
-		if (fig instanceof King) {
-			if (xyOfKings.get(fig.getRank().getOwner()) != null) {
-				return false;
-			}
-			xyOfKings.put(fig.getRank().getOwner(), fig.getXY());
-		}
-		setFigureToPosition(fig);
-		return true;
-	}
-	
-	public boolean initializeGame() {
-		numberOfMove = 0;
-		log = new HashSet<>();
-		numberOfFiftyRule = 0;
-		return initializeGame(numberOfMove, log, numberOfFiftyRule, startGamePositions);
-	}
-	
-	public void move(Figure figFrom, int x, int y) {
-		startPositions = new XY(figFrom.getXY());
-		moveWithoutTrace(figFrom, x, y);
-		endPositions = new XY(figFrom.getXY());
-		lastMovedFigure = figFrom;
-	}
-	
-	/*
-	 * need to make this check after making move
-	 */
-	
-	public void move(Figure figFrom, XY to) {
-		move(figFrom, to.getX(), to.getY());
-		figFrom.setTouched(true);
-	}
-	
-	public void moveWithoutTrace(Figure figFrom, int x, int y) {
-		board[figFrom.getXY().getX()][figFrom.getXY().getY()] = null;
-		figFrom.getXY().setXY(x, y);
-		Owner o = figFrom.getRank().getOwner();
-		if (figFrom.getXY().equals(xyOfKings.get(o))) {
-			xyOfKings.get(o).setXY(x, y);
-		}
-		board[x][y] = figFrom;
-	}
-	
-	public void moveWithoutTrace(Figure figFrom, XY to) {
-		moveWithoutTrace(figFrom, to.getX(), to.getY());
-		
-	}
-	
-	public boolean promotePawn(Figure pawn, Rank gotRank, XY to) {
-		pawn.setRank(gotRank);
-		return true;
-	}
-	
-	public void remove(int x, int y) {
-		Figure fig = board[x][y];
-		xyOfSides.get(fig.getRank().getOwner()).remove(fig.getXY());
-		board[x][y] = null;
-		
-	}
-	
-	public void remove(XY xy) {
-		remove(xy.getX(), xy.getY());
-	}
-	
-	public void setFigureToPosition(Figure fig) {
-		xyOfSides.get(fig.getRank().getOwner()).add(fig.getXY());
-		board[fig.getXY().getX()][fig.getXY().getY()] = fig;
-	}
-	
-	public int assessPositions(Figure fig, XY to) {
-		int output = check(fig, to);
-		if (output >= CORRECT_MOVE) {
-			if (output != CHECK_TO_AWAITING_SIDE) {
-				output = assessDraw(fig, to);
-			}
-			
-			if (output < DRAW) {
-				output = assessMateOrStalemate(fig, to, output);
-			}
-		}
-		return output;
-	}
-	
-	/*
-	 * already known that to current side this move is correct
-	 * 
-	 * if opposite side could move without further check it's asserted that it's
-	 * not mate or stalemate so it's correct move
-	 */
-	
-	public int assessMateOrStalemate(Figure fig, XY to, int checkOutput) {
-		int output = CORRECT_MOVE;
-		XY origXY = fig.getXY();
-		Owner o = fig.getRank().getOwner();
-		moveWithoutTrace(fig, to);
-		// TODO add assessment for king of other side
-		for (XY xy : xyOfSides.get(o.oppositeOwner())) {
-			output = checkInAssessMateOrStalemate(xy);
-			if (output != CHECK_TO_CURRENT_SIDE)
-				break;
-		}
-		moveWithoutTrace(fig, origXY);
-		if (output == CHECK_TO_CURRENT_SIDE) {
-			// mate or stalemate to awaiting side
-			if (checkOutput == CORRECT_MOVE) {
-				output = DRAW_STALEMATE;
-			} else {
-				output = (o == Owner.WHITE) ? CHECKMATE_TO_BLACK : CHECKMATE_TO_WHITE;
-			}
-		}
-		// correct move
-		return output;
-		
-	}
-	
-	protected int checkInAssessMateOrStalemate(XY xy) {
-		int output = CORRECT_MOVE;
-		Figure figFromOtherSide = getFigure(xy);
-		ArrayList<XY> possibleMoves = figFromOtherSide.getPossibleMoves(this);
-		for (XY figureFromOtherSidePossibleMove : possibleMoves) {
-			output = check(figFromOtherSide, figureFromOtherSidePossibleMove);
-			if (output != CHECK_TO_CURRENT_SIDE) {
-				break;
-			}
-		}
-		return output;
-	}
-	
 	protected int assessDraw(Figure fig, XY to) {
 		if (numberOfFiftyRule >= 50) {
 			return DRAW_50_RULE;
@@ -390,6 +120,251 @@ public class Board {
 		
 	}
 	
+	public int assessMateOrStalemate(Figure fig, XY to, int checkOutput) {
+		int output = CORRECT_MOVE;
+		XY origXY = fig.getXY();
+		Owner o = fig.getRank().getOwner();
+		moveWithoutTrace(fig, to);
+		for (XY xy : xyOfSides.get(o.oppositeOwner())) {
+			output = checkInAssessMateOrStalemate(xy);
+			if (output != CHECK_TO_CURRENT_SIDE)
+				break;
+		}
+		moveWithoutTrace(fig, origXY);
+		if (output == CHECK_TO_CURRENT_SIDE) {
+			// mate or stalemate to awaiting side
+			if (checkOutput == CORRECT_MOVE) {
+				output = DRAW_STALEMATE;
+			} else {
+				output = (o == Owner.WHITE) ? CHECKMATE_TO_BLACK : CHECKMATE_TO_WHITE;
+			}
+		}
+		return output;
+		
+	}
+	
+	public int assessPositions(Figure fig, XY to) {
+		int output = check(fig, to);
+		if (output >= CORRECT_MOVE) {
+			if (output != CHECK_TO_AWAITING_SIDE) {
+				output = assessDraw(fig, to);
+			}
+			
+			if (output < DRAW) {
+				output = assessMateOrStalemate(fig, to, output);
+			}
+		}
+		return output;
+	}
+	
+	public void castling(Figure king, XY to) {
+		int rookX = (to.getX() == 6) ? 7 : 0;
+		int kingY = king.getXY().getY();
+		int newRookX = (to.getX() == 6) ? 5 : 3;
+		move(king, to);
+		move(getFigure(rookX, kingY), newRookX, kingY);
+		
+	}
+	
+	public int check(Figure figFrom, XY to) {
+		Owner w = Owner.WHITE;
+		Owner b = Owner.BLACK;
+		Owner o = figFrom.getRank().getOwner();
+		XY origXY = new XY(figFrom.getXY());
+		int result = CORRECT_MOVE;
+		moveWithoutTrace(figFrom, to);
+		
+		if (origXY.equals(xyOfKings.get(o))) {
+			xyOfKings.put(o, to);
+			boolean isKingsNotOnNeighborSquares = Math.abs(xyOfKings.get(w).getX() - xyOfKings.get(b).getX()) > 1 && Math.abs(xyOfKings.get(w).getY() - xyOfKings.get(b).getY()) > 1;
+			if (isKingsNotOnNeighborSquares == false) {
+				result = INCORRECT_MOVE;
+			} else {
+				result = checkFromKingsPointOfView(o);
+			}
+			xyOfKings.put(o, origXY);
+		} else {
+			result = checkFromKingsPointOfView(o);
+		}
+		
+		moveWithoutTrace(figFrom, origXY);
+		return result;
+		
+	}
+	
+	public int checkFromKingsPointOfView(Owner o) {
+		King currentKing = (King) getFigure(xyOfKings.get(o));
+		boolean isUnderAttack = currentKing.isUnderAttack(this);
+		if (isUnderAttack == true) {
+			return CHECK_TO_CURRENT_SIDE;
+		}
+		Owner oo = o.oppositeOwner();
+		King oppositeKing = (King) getFigure(xyOfKings.get(oo));
+		isUnderAttack = oppositeKing.isUnderAttack(this);
+		if (isUnderAttack == true) {
+			return CHECK_TO_AWAITING_SIDE;
+		}
+		return CORRECT_MOVE;
+		
+	}
+	
+	protected int checkInAssessMateOrStalemate(XY xy) {
+		int output = CORRECT_MOVE;
+		Figure figFromOtherSide = getFigure(xy);
+		ArrayList<XY> possibleMoves = figFromOtherSide.getPossibleMoves(this);
+		for (XY figureFromOtherSidePossibleMove : possibleMoves) {
+			output = check(figFromOtherSide, figureFromOtherSidePossibleMove);
+			if (output != CHECK_TO_CURRENT_SIDE) {
+				break;
+			}
+		}
+		return output;
+	}
+	
+	public void enPassant(Figure pawnKiller) {
+		remove(endPositions);
+		move(pawnKiller, endPositions.getX(), endPositions.getY() + pawnKiller.getRank().getOwner().getDirection());
+	}
+	
+	public Figure[][] getBoard() {
+		return board;
+	}
+	
+	public XY getEndPositions() {
+		return endPositions;
+	}
+	
+	public Figure getFigure(char x, char y) {
+		return board[x - 'a'][(Character.digit(y, 10) - 1)];
+	}
+	
+	public Figure getFigure(int x, int y) {
+		return board[x][y];
+	}
+	
+	public Figure getFigure(String in) {
+		return getFigure(in.charAt(0), in.charAt(1));
+	}
+	
+	public Figure getFigure(XY from) {
+		return board[from.getX()][from.getY()];
+	}
+	
+	public Figure getLastMovedFigure() {
+		return lastMovedFigure;
+	}
+	
+	public XY getStartPositions() {
+		return startPositions;
+	}
+	
+	private String getStringRepresentationOfFigure(XY xy) {
+		Figure fig = getFigure(xy);
+		return fig.toString() + xy.toString();
+	}
+	
+	public XY getXyOfKing(Owner o) {
+		return xyOfKings.get(o);
+	}
+	
+	public ArrayList<XY> getXyOfSides(Owner o) {
+		return xyOfSides.get(o);
+	}
+	
+	/*
+	 * need to make this check after making move
+	 */
+	
+	public boolean initializeGame() {
+		numberOfMove = 0;
+		log = new HashSet<>();
+		numberOfFiftyRule = 0;
+		return initializeGame(numberOfMove, log, numberOfFiftyRule, startGamePositions);
+	}
+	
+	public boolean initializeGame(int numberOfMove, HashSet<HashSet<String>> log, int numberOfFiftyRule, ArrayList<String> startGamePositions) {
+		this.numberOfMove = numberOfMove;
+		this.log = log;
+		boolean output = true;
+		xyOfKings = new HashMap<>();
+		xyOfSides = new HashMap<>();
+		xyOfSides.put(Owner.WHITE, new ArrayList<XY>());
+		xyOfSides.put(Owner.BLACK, new ArrayList<XY>());
+		for (String startGamePosition : startGamePositions) {
+			output = setFigureToPosition(startGamePosition);
+			if (output == false) {
+				break;
+			}
+		}
+		return output;
+		
+	}
+	
+	public boolean isEnPassantPossible(Figure p) {
+		boolean isPawnOnRightY = (p.getXY().getY() == (int) (3.5 + 0.5 * p.getRank().getOwner().getDirection()));
+		if (isPawnOnRightY == false) {
+			return false;
+		}
+		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = (lastMovedFigure.getRank().getIndex().equals("p") && (Math.abs(endPositions.getY() - startPositions.getY()) == 2) && (Math.abs(endPositions.getX()
+				- p.getXY().getX()) == 1));
+		return isLastMovedFigurePawnAndInEnPassantLetalZone;
+		
+	}
+	
+	public void move(Figure figFrom, int x, int y) {
+		startPositions = new XY(figFrom.getXY());
+		moveWithoutTrace(figFrom, x, y);
+		endPositions = new XY(figFrom.getXY());
+		lastMovedFigure = figFrom;
+	}
+	
+	public void move(Figure figFrom, XY to) {
+		move(figFrom, to.getX(), to.getY());
+		figFrom.setTouched(true);
+	}
+	
+	public void moveWithoutTrace(Figure figFrom, int x, int y) {
+		board[figFrom.getXY().getX()][figFrom.getXY().getY()] = null;
+		figFrom.getXY().setXY(x, y);
+		Owner o = figFrom.getRank().getOwner();
+		if (figFrom.getXY().equals(xyOfKings.get(o))) {
+			xyOfKings.get(o).setXY(x, y);
+		}
+		board[x][y] = figFrom;
+	}
+	
+	public void moveWithoutTrace(Figure figFrom, XY to) {
+		moveWithoutTrace(figFrom, to.getX(), to.getY());
+		
+	}
+	
+	public boolean promotePawn(Figure pawn, Rank gotRank, XY to) {
+		pawn.setRank(gotRank);
+		return true;
+	}
+	
+	/*
+	 * already known that to current side this move is correct
+	 * 
+	 * if opposite side could move without further check it's asserted that it's
+	 * not mate or stalemate so it's correct move
+	 */
+	
+	public void remove(int x, int y) {
+		Figure fig = board[x][y];
+		xyOfSides.get(fig.getRank().getOwner()).remove(fig.getXY());
+		board[x][y] = null;
+		
+	}
+	
+	public void remove(XY xy) {
+		remove(xy.getX(), xy.getY());
+	}
+	
+	public void resetNumberOfFiftyRule() {
+		numberOfFiftyRule = 0;
+	}
+	
 	public void saveMove() {
 		numberOfMove++;
 		HashSet<String> thisMove = new HashSet<>();
@@ -404,12 +379,35 @@ public class Board {
 		log.add(thisMove);
 	}
 	
-	private String getStringRepresentationOfFigure(XY xy) {
-		Figure fig = getFigure(xy);
-		return fig.toString() + xy.toString();
+	public void setFigureToPosition(Figure fig) {
+		xyOfSides.get(fig.getRank().getOwner()).add(fig.getXY());
+		board[fig.getXY().getX()][fig.getXY().getY()] = fig;
 	}
 	
-	public void resetNumberOfFiftyRule() {
-		numberOfFiftyRule = 0;
+	public boolean setFigureToPosition(String startGamePosition) {
+		Figure fig = Figure.newInstance(startGamePosition);
+		if (fig == null) {
+			return false;
+		}
+		boolean isXYAlreadyPresent = xyOfSides.get(Owner.BLACK).contains(fig.getXY()) || xyOfSides.get(Owner.WHITE).contains(fig.getXY()) || xyOfKings.containsValue(fig.getXY());
+		if (isXYAlreadyPresent == true) {
+			return false;
+		}
+		if (fig instanceof King) {
+			if (xyOfKings.get(fig.getRank().getOwner()) != null) {
+				return false;
+			}
+			xyOfKings.put(fig.getRank().getOwner(), fig.getXY());
+		}
+		setFigureToPosition(fig);
+		return true;
+	}
+	
+	public XY xyEnPassantPossible(Figure p) {
+		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = isEnPassantPossible(p);
+		if (isLastMovedFigurePawnAndInEnPassantLetalZone) {
+			return XY.getNewXY(endPositions.getX(), endPositions.getY() + p.getRank().getOwner().getDirection());
+		}
+		return null;
 	}
 }
