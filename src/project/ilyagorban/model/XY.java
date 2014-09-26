@@ -1,17 +1,20 @@
 package project.ilyagorban.model;
 
 public class XY {
-	private CoordX cX;
-	
-	private int y;
-	
-	public XY(int x, int y) {
-		setXY(x, y);
+	public static XY getNewXY(char c, char i) {
+		if (c >= 'a' && c <= 'h' && i >= '1' && i <= '8') {
+			return new XY(c, i);
+		} else {
+			return null;
+		}
 	}
 	
-	public XY(char c, char i) { // [e2e4] -> 3.1 3.3
-		setXY(c - 'a', (Character.digit(i, 10) - 1));
-		
+	public static XY getNewXY(int x, int y) {
+		if (x > 7 || x < 0 || y > 7 || y < 0) {
+			return null;
+		} else {
+			return new XY(x, y);
+		}
 	}
 	
 	public static XY[] getXYfromInput(String input) {
@@ -20,44 +23,41 @@ public class XY {
 		}
 		char[] inputChars = input.toCharArray();
 		if (!(inputChars[0] == inputChars[2] && inputChars[1] == inputChars[3])) {
-			char cFrom = inputChars[0];
-			char cTo = inputChars[2];
-			if ((cFrom >= 'a' && cFrom <= 'h') && (cTo >= 'a' && cTo <= 'h')) {
-				char iFrom = inputChars[1];
-				char iTo = inputChars[3];
-				if ((iFrom >= '1' && iFrom <= '8') && (iTo >= '1' && iTo <= '8')) {
-					if (cFrom == cTo && iFrom == iTo) {
-						return null;
-					} else {
-						return new XY[] { new XY(cFrom, iFrom), new XY(cTo, iTo) };
-					}
-				}
+			XY from = getNewXY(inputChars[0], inputChars[1]);
+			XY to = getNewXY(inputChars[2], inputChars[3]);
+			if (from == null || to == null) {
+				return null;
+			} else {
+				return new XY[] { from, to };
 			}
 		}
 		return null;
 	}
 	
+	public static XY getXYFromLog(String log) {
+		if (log == null || log.length() != 4) {
+			return null;
+		}
+		char[] aChars = log.toCharArray();
+		return getNewXY(aChars[2], aChars[3]);
+	}
+	
+	private CoordX cX;
+	
+	private int y;
+	
+	private XY(char c, char i) {
+		setXY(c - 'a', (Character.digit(i, 10) - 1));
+		
+	}
+	
+	private XY(int x, int y) {
+		setXY(x, y);
+	}
+	
 	public XY(XY xy) {
 		this.cX = xy.cX;
 		this.y = xy.y;
-	}
-	
-	public static XY getXYFromLog(String log) {
-		int x, y;
-		String[] aLog = log.split("");
-		try {
-			x = Integer.parseInt(aLog[2]);
-			y = Integer.parseInt(aLog[3]);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return null;
-		}
-		if (x < 0 || x > 7 || y < 0 || y > 7) {
-			return null;
-		} else {
-			return new XY(x, y);
-		}
-		
 	}
 	
 	@Override
@@ -66,7 +66,7 @@ public class XY {
 			return false;
 		}
 		XY other = (XY) o;
-		return this.getY() == other.getY() && this.getX() == other.getX();
+		return this.hashCode() == other.hashCode();
 		
 	}
 	
