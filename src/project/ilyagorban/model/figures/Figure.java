@@ -134,6 +134,10 @@ public abstract class Figure {
 		return getRank().getPicture();
 	}
 	
+	public String toLog() {
+		return getRank().toLog() + xy.toString();
+	}
+	
 	public ArrayList<XY> getPawnPossibleAttack(Board board) {
 		ArrayList<XY> output = new ArrayList<>(2);
 		int direction = this.getRank().getOwner().getDirection();
