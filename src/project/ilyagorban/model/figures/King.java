@@ -41,7 +41,7 @@ public class King extends Figure {
 						}
 					}
 					if (isAbleToCastle == true)
-						output.add(new XY(this.getXY().getX() + direction * 2, this.getXY().getY()));
+						output.add(XY.getNewXY(this.getXY().getX() + direction * 2, this.getXY().getY()));
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public class King extends Figure {
 			ArrayList<XY> ppa = this.getPawnPossibleAttack(board);
 			for (XY xy : ppa) {
 				Figure fig = board.getFigure(xy);
-				if (fig.getRank().getIndex() == "p") {
+				if (this.isEnemy(fig) && fig.getRank().getIndex() == "p") {
 					output = true;
 					break;
 				}
