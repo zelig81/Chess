@@ -42,12 +42,12 @@ public class Pawn extends Figure {
 		int y = this.getXY().getY();
 		boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y + direction) == null);
 		if (isAbleToGoStraightForwardOneMove == true) {
-			output.add(new XY(x, y + direction));
+			output.add(XY.getNewXY(x, y + direction));
 		}
 		
 		boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() == false && board.getFigure(x, y + direction) == null && board.getFigure(x, y + 2 * direction) == null);
 		if (isAbleToGoStraightForwardUntouchedTwoMoves == true) {
-			output.add(new XY(x, y + 2 * direction));
+			output.add(XY.getNewXY(x, y + 2 * direction));
 		}
 		// take figure
 		ArrayList<XY> removableEnemysXY = this.getPawnPossibleAttack(board);
