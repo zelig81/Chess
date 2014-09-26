@@ -36,12 +36,12 @@ public enum Rank {
 		this.index = s;
 	}
 	
-	public String getIndex() {
-		return index;
-	}
-	
 	public int getImportance() {
 		return importance;
+	}
+	
+	public String getIndex() {
+		return index;
 	}
 	
 	public Owner getOwner() {
