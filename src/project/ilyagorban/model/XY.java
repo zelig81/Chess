@@ -71,6 +71,9 @@ public class XY {
 	}
 	
 	public int getX() {
+		if (cX == null) {
+			return -100;
+		}
 		return cX.getX();
 	}
 	
