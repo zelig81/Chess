@@ -3,18 +3,29 @@
  */
 package project.ilyagorban;
 
+import project.ilyagorban.controllers.ChessController;
+import project.ilyagorban.model.ChessModel;
+import project.ilyagorban.view.ChessView;
+
 /**
- * @author ilya gorban
+ * @author Ilya Gorban
  *
  */
 public class Main {
-
-	/**
-	 * @param args
-	 */
+	
+	protected static ChessModel cm;
+	protected static ChessView cv;
+	protected static ChessController cc;
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		prepareGame("console");
+		cc.start();
 	}
-
+	
+	public static void prepareGame(String output) {
+		cm = new ChessModel();
+		cv = new ChessView(output);
+		cc = new ChessController(cm, cv);
+	}
+	
 }
