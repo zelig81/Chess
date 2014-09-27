@@ -37,7 +37,8 @@ public abstract class Figure {
 	}
 	
 	public int checkMove(Board board, XY to) {
-		boolean isEndPointEmptyOrEnemy = isEndPointEmptyOrEnemy(this.getRank().getOwner(), board.getFigure(to));
+		Figure figTo = board.getFigure(to);
+		boolean isEndPointEmptyOrEnemy = (figTo == null || figTo.isEnemy(this));
 		if (isEndPointEmptyOrEnemy == false)
 			return OBSTACLE_ON_WAY;
 		
@@ -96,12 +97,6 @@ public abstract class Figure {
 	
 	public XY getXY() {
 		return xy;
-	}
-	
-	protected boolean isEndPointEmptyOrEnemy(Owner o, Figure figTo) {
-		boolean result = (figTo == null || figTo.isEnemy(o));
-		return result;
-		
 	}
 	
 	public boolean isTouched() {

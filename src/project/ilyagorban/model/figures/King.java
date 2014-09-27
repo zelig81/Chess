@@ -73,7 +73,7 @@ public class King extends Figure {
 			this.setMoveLen(fourFigureMoveLen[i]);
 			ArrayList<XY> pm = this.getPossibleMoves(board);
 			if (pm == null) {
-				System.out.println(this.toLog());
+				System.out.println(this.toLog() + fourFigureDirections[i].toString());
 				break;
 			}
 			if (pm.size() != 0)
