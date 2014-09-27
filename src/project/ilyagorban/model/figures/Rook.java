@@ -5,11 +5,12 @@ import project.ilyagorban.model.XY;
 
 // ♜♖
 public class Rook extends Figure {
-
-    public Rook(XY p, Rank r) {
-	super(p, r);
-	setDirections(directionsOfRook);
-	setMoveLen(8);
-    }
-
+	
+	public Rook(XY p, Rank r) {
+		super(p, r);
+		setMoveDirections(moveDirectionsOfRook);
+		setKillDirections(moveDirectionsOfRook);
+		setMoveLen(8);
+	}
+	
 }

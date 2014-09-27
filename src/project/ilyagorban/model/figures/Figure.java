@@ -5,9 +5,6 @@ package project.ilyagorban.model.figures;
 
 import static project.ilyagorban.model.ChessModel.*;
 
-import java.util.ArrayList;
-
-import project.ilyagorban.model.Board;
 import project.ilyagorban.model.Owner;
 import project.ilyagorban.model.Rank;
 import project.ilyagorban.model.XY;
@@ -20,75 +17,37 @@ public abstract class Figure {
 	private XY xy;
 	private boolean touched;
 	private Rank rank;
-	private int[][] directions;
+	private int[][] moveDirections;
+	private int[][] killDirections;
 	private int moveLen;
 	
-	public static final int[][] directionsOfBishop = new int[][] { { 1, 1 }, { 1, -1 }, { -1, -1 }, { -1, 1 } };
-	public static final int[][] directionsOfRook = new int[][] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
-	public static final int[][] directionsOfQueen = new int[][] { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 } };
-	public static final int[][] directionsOfKnight = new int[][] { { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 }, { 1, 2 }, { -1, 2 }, { 1, -2 }, { -1, -2 } };
-	public static final int[][][] fourFigureDirections = { directionsOfBishop, directionsOfRook, directionsOfKnight };
-	public static final int[] fourFigureMoveLen = { 8, 8, 1 };
-	public static final String[][] fourFigureIndex = { { "q", "b" }, { "q", "r" }, { "n" } };
+	public static final int[][] moveDirectionsOfBishop = new int[][] { { 1, 1 }, { 1, -1 }, { -1, -1 }, { -1, 1 } };
+	public static final int[][] moveDirectionsOfRook = new int[][] { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 } };
+	public static final int[][] moveDirectionsOfQueen = new int[][] { { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 }, { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 } };
+	public static final int[][] moveDirectionsOfKnight = new int[][] { { 2, 1 }, { 2, -1 }, { -2, 1 }, { -2, -1 }, { 1, 2 }, { -1, 2 }, { 1, -2 }, { -1, -2 } };
+	public static final int[][] moveDirectionsOfWhitePawn = new int[][] { { 0, 1 } };
+	public static final int[][] moveDirectionsOfBlackPawn = new int[][] { { 0, -1 } };
+	public static final int[][] killDirectionsOfWhitePawn = new int[][] { { 1, 1, }, { -1, 1 } };
+	public static final int[][] killDirectionsOfBlackPawn = new int[][] { { 1, -1, }, { -1, -1 } };
+	public static final int[][][] allKillDirections = { moveDirectionsOfKnight, moveDirectionsOfBishop, moveDirectionsOfRook };
+	public static final int[] allMoveLen = { 1, 8, 8 };
+	public static final String[][] allKillerIndex = { { "n" }, { "q", "b" }, { "q", "r" } };
 	
-	public Figure(XY xy, Rank r) {
+	protected Figure(XY xy, Rank r) {
 		this.xy = xy;
 		this.setRank(r);
 	}
 	
-	public int checkMove(Board board, XY to) {
-		Figure figTo = board.getFigure(to);
-		boolean isEndPointEmptyOrEnemy = (figTo == null || figTo.isEnemy(this));
-		if (isEndPointEmptyOrEnemy == false)
-			return OBSTACLE_ON_WAY;
-		
-		ArrayList<XY> possibleMoves = getPossibleMoves(board);
-		if (possibleMoves.contains(to) == true) {
-			int result = board.assessPositions(this, to);
-			return result;
-		} else {
-			return INCORRECT_MOVE;
-		}
+	public int[][] getMoveDirections() {
+		return this.moveDirections;
 	}
 	
-	public int[][] getDirections() {
-		return this.directions;
+	public int[][] getKillDirections() {
+		return this.killDirections;
 	}
 	
 	public int getMoveLen() {
 		return moveLen;
-	}
-	
-	public ArrayList<XY> getPossibleMoves(Board board) {
-		ArrayList<XY> output = new ArrayList<>();
-		// cycle of directions
-		int thisX = this.getXY().getX();
-		int thisY = this.getXY().getY();
-		for (int[] dir : getDirections()) {
-			int i = 1;
-			while (true) {
-				if (i > getMoveLen())
-					break;
-				int newX = thisX + dir[0] * i;
-				int newY = thisY + dir[1] * i;
-				XY xy = XY.getNewXY(newX, newY);
-				if (xy == null) {
-					break;
-				}
-				i++;
-				Figure fig = board.getFigure(newX, newY);
-				if (fig == null) {
-					output.add(xy);
-					continue;
-				}
-				if (this.isEnemy(fig))
-					output.add(xy);
-				break;
-				
-			}
-		}
-		return output;
-		
 	}
 	
 	public Rank getRank() {
@@ -103,9 +62,12 @@ public abstract class Figure {
 		return touched;
 	}
 	
-	protected void setDirections(int[][] directions) {
-		this.directions = directions;
-		
+	protected void setMoveDirections(int[][] directions) {
+		this.moveDirections = directions;
+	}
+	
+	protected void setKillDirections(int[][] directions) {
+		this.killDirections = directions;
 	}
 	
 	public void setMoveLen(int moveLen) {
@@ -131,26 +93,6 @@ public abstract class Figure {
 	
 	public String toLog() {
 		return getRank().toLog() + xy.toString();
-	}
-	
-	public ArrayList<XY> getPawnPossibleAttack(Board board) {
-		ArrayList<XY> output = new ArrayList<>(2);
-		int direction = this.getRank().getOwner().getDirection();
-		if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
-			if (this.getXY().getX() != 7) {
-				Figure target = board.getFigure(this.getXY().getX() + 1, this.getXY().getY() + direction);
-				boolean isRemovable = (target != null && this.isEnemy(target));
-				if (isRemovable == true)
-					output.add(target.getXY());
-			}
-			if (this.getXY().getX() != 0) {
-				Figure target = board.getFigure(this.getXY().getX() - 1, this.getXY().getY() + direction);
-				boolean isRemovable = (target != null && this.isEnemy(target));
-				if (isRemovable == true)
-					output.add(target.getXY());
-			}
-		}
-		return output;
 	}
 	
 	public static Figure newInstance(String startGamePosition) {
@@ -200,5 +142,9 @@ public abstract class Figure {
 			return false;
 		}
 		return this.getRank().getOwner() != o;
+	}
+	
+	public int getSpecialCorrectMoveName(XY to) {
+		return CORRECT_MOVE;
 	}
 }

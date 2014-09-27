@@ -5,11 +5,12 @@ import project.ilyagorban.model.XY;
 
 // ♘♞ figures
 public class Knight extends Figure {
-
-    public Knight(XY p, Rank r) {
-	super(p, r);
-	setDirections(directionsOfKnight);
-	setMoveLen(1);
-    }
-
+	
+	public Knight(XY p, Rank r) {
+		super(p, r);
+		setMoveDirections(moveDirectionsOfKnight);
+		setKillDirections(moveDirectionsOfKnight);
+		setMoveLen(1);
+	}
+	
 }

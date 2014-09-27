@@ -40,7 +40,7 @@ public class ChessModel {
 		Figure figFrom = board.getFigure(from);
 		
 		if (figFrom != null && figFrom.isEnemy(o) == false) {
-			checkMove = figFrom.checkMove(board, to);
+			checkMove = board.checkMove(from, to);
 			
 			if (checkMove >= CORRECT_MOVE) {
 				if (figFrom.getRank().getIndex().equals("p")) { // pawn move

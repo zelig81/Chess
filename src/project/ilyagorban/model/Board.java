@@ -7,6 +7,7 @@ import java.util.HashSet;
 import static project.ilyagorban.model.ChessModel.*;
 import project.ilyagorban.model.figures.Figure;
 import project.ilyagorban.model.figures.King;
+import project.ilyagorban.model.figures.Pawn;
 
 public class Board {
 	public static Board getInstance() {
@@ -143,7 +144,8 @@ public class Board {
 		
 	}
 	
-	public int assessPositions(Figure fig, XY to) {
+	public int assessPositions(Figure fig, XY to, int correctMoveResult) {
+		// TODO refactor assessPositions
 		int output = check(fig, to);
 		if (output >= CORRECT_MOVE) {
 			if (output != CHECK_TO_AWAITING_SIDE) {
@@ -209,7 +211,7 @@ public class Board {
 	protected int checkInAssessMateOrStalemate(XY xy) {
 		int output = CORRECT_MOVE;
 		Figure figFromOtherSide = getFigure(xy);
-		ArrayList<XY> possibleMoves = figFromOtherSide.getPossibleMoves(this);
+		ArrayList<XY> possibleMoves = getPossibleMoves(figFromOtherSide);
 		for (XY figureFromOtherSidePossibleMove : possibleMoves) {
 			output = check(figFromOtherSide, figureFromOtherSidePossibleMove);
 			if (output != CHECK_TO_CURRENT_SIDE) {
@@ -217,6 +219,34 @@ public class Board {
 			}
 		}
 		return output;
+	}
+	
+	public int checkMove(XY from, XY to) {
+		Figure figTo = getFigure(to);
+		Figure figFrom = getFigure(from);
+		int output = INCORRECT_MOVE;
+		
+		boolean isEndPointEmptyOrEnemy = (figTo == null || figTo.isEnemy(figFrom));
+		if (isEndPointEmptyOrEnemy == false)
+			return OBSTACLE_ON_WAY;
+		
+		ArrayList<XY> pm = getPossibleMoves(figFrom);
+		if (pm.contains(to) == true) {
+			output = CORRECT_MOVE;
+		} else {
+			ArrayList<XY> psm = getPossibleSpecialMove(figFrom);
+			if (psm.contains(to) == true) {
+				output = figFrom.getSpecialCorrectMoveName(to);
+			} else {
+				output = INCORRECT_MOVE;
+			}
+		}
+		
+		if (output >= CORRECT_MOVE) {
+			output = assessPositions(figFrom, to, output);
+		}
+		return output;
+		
 	}
 	
 	public void enPassant(Figure pawnKiller) {
@@ -255,16 +285,84 @@ public class Board {
 		return lastMovedFigure;
 	}
 	
-	public XY getStartPositions() {
-		return startPositions;
+	public ArrayList<XY> getPawnPossibleAttack(XY from, XY to) {
+		// TODO remove pawn possible attack
+		// ArrayList<XY> output = new ArrayList<>(2);
+		// int direction = this.getRank().getOwner().getDirection();
+		// if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
+		// if (this.getXY().getX() != 7) {
+		// Figure target = board.getFigure(this.getXY().getX() + 1,
+		// this.getXY().getY() + direction);
+		// boolean isRemovable = (target != null && this.isEnemy(target));
+		// if (isRemovable == true)
+		// output.add(target.getXY());
+		// }
+		// if (this.getXY().getX() != 0) {
+		// Figure target = board.getFigure(this.getXY().getX() - 1,
+		// this.getXY().getY() + direction);
+		// boolean isRemovable = (target != null && this.isEnemy(target));
+		// if (isRemovable == true)
+		// output.add(target.getXY());
+		// }
+		// }
+		// return output;
+		return null;
 	}
 	
-	private String getStringRepresentationOfFigure(XY xy) {
-		if (xy == null) {
-			return null;
+	private void getPossibleKillOrMoveForOneDirection(ArrayList<XY> list, Figure figFrom, int[] dir, boolean isKillAction) {
+		boolean isPawn = figFrom instanceof Pawn;
+		int thisX = figFrom.getXY().getX();
+		int thisY = figFrom.getXY().getY();
+		int i = 1;
+		while (true) {
+			if (i > figFrom.getMoveLen())
+				break;
+			int newX = thisX + dir[0] * i;
+			int newY = thisY + dir[1] * i;
+			XY xy = XY.getNewXY(newX, newY);
+			if (xy == null) {
+				break;
+			}
+			i++;
+			Figure figTo = getFigure(newX, newY);
+			if (figTo == null) {
+				boolean isPawnKiller = (isPawn == true && isKillAction == true);
+				if (isPawnKiller == false) {
+					list.add(xy);
+					continue;
+				}
+			} else if (figFrom.isEnemy(figTo)) {
+				boolean isPawnNotKiller = (isPawn == true && isKillAction == false);
+				if (isPawnNotKiller == false) {
+					list.add(xy);
+				}
+			}
+			break;
 		}
-		Figure fig = getFigure(xy);
-		return fig.toString() + xy.toString();
+		
+	}
+	
+	public ArrayList<XY> getPossibleMoves(Figure figFrom) {
+		ArrayList<XY> output = new ArrayList<>();
+		// cycle of directions
+		for (int[] dir : figFrom.getKillDirections()) {
+			getPossibleKillOrMoveForOneDirection(output, figFrom, dir, true);
+		}
+		if (figFrom instanceof Pawn) {
+			for (int[] dir : figFrom.getMoveDirections()) {
+				getPossibleKillOrMoveForOneDirection(output, figFrom, dir, false);
+			}
+		}
+		return output;
+	}
+	
+	private ArrayList<XY> getPossibleSpecialMove(Figure figFrom) {
+		// TODO Auto-generated method stub
+		return new ArrayList<>();
+	}
+	
+	public XY getStartPositions() {
+		return startPositions;
 	}
 	
 	public XY getXyOfKing(Owner o) {
@@ -372,13 +470,13 @@ public class Board {
 	public void saveMove() {
 		numberOfMove++;
 		HashSet<String> thisMove = new HashSet<>();
-		thisMove.add(getStringRepresentationOfFigure(xyOfKings.get(Owner.WHITE)));
-		thisMove.add(getStringRepresentationOfFigure(xyOfKings.get(Owner.BLACK)));
+		thisMove.add(getFigure(xyOfKings.get(Owner.WHITE)).toLog());
+		thisMove.add(getFigure(xyOfKings.get(Owner.BLACK)).toLog());
 		for (XY xy : xyOfSides.get(Owner.WHITE)) {
-			thisMove.add(getStringRepresentationOfFigure(xy));
+			thisMove.add(getFigure(xy).toLog());
 		}
 		for (XY xy : xyOfSides.get(Owner.BLACK)) {
-			thisMove.add(getStringRepresentationOfFigure(xy));
+			thisMove.add(getFigure(xy).toLog());
 		}
 		log.add(thisMove);
 	}
