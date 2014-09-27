@@ -1,10 +1,6 @@
 package project.ilyagorban.model.figures;
 
-import static project.ilyagorban.model.ChessModel.CORRECT_MOVE;
-import static project.ilyagorban.model.ChessModel.EN_PASSANT;
-import static project.ilyagorban.model.ChessModel.PAWN_PROMOTION;
-
-import java.util.ArrayList;
+import static project.ilyagorban.model.ChessModel.*;
 
 import project.ilyagorban.model.Owner;
 import project.ilyagorban.model.Rank;
@@ -21,69 +17,33 @@ public class Pawn extends Figure {
 			setMoveDirections(moveDirectionsOfWhitePawn);
 			setKillDirections(killDirectionsOfWhitePawn);
 		}
+		setMoveLen(2);
+		setKillLen(1);
+	}
+	
+	@Override
+	public void setTouched(boolean touched) {
+		super.setTouched(touched);
 		setMoveLen(1);
 	}
 	
 	@Override
 	public int getSpecialCorrectMoveName(XY to) {
-		// TODO Auto-generated method stub
-		return super.getSpecialCorrectMoveName(to);
+		if (to == null) {
+			return INCORRECT_MOVE;
+		}
+		
+		int enpassantY = (this.getRank().getOwner() == Owner.WHITE) ? 4 : 3;
+		if (this.getXY().getY() == enpassantY) {
+			return EN_PASSANT;
+		}
+		
+		int promotionY = (this.getRank().getOwner() == Owner.WHITE) ? 7 : 0;
+		if (to.getY() == promotionY) {
+			return PAWN_PROMOTION;
+		}
+		
+		return CORRECT_MOVE;
 	}
 	
-	// TODO remove checkMove from pawn
-	// @Override
-	// public int checkMove(Board board, XY to) {
-	// int superMethod = super.checkMove(board, to);
-	// if (superMethod == CORRECT_MOVE) {
-	// boolean isReadyToBePromoted = ((to.getY() == 7 &&
-	// this.isEnemy(Owner.BLACK)) || (to.getY() == 0 &&
-	// this.isEnemy(Owner.WHITE)));
-	// if (isReadyToBePromoted) {
-	// return PAWN_PROMOTION;
-	// }
-	// if (to.equals(board.xyEnPassantPossible(this))) {
-	// return EN_PASSANT;
-	// }
-	// }
-	// return superMethod;
-	//
-	// }
-	
-	// TODO remove getPM from pawn
-	// @Override
-	// public ArrayList<XY> getPossibleMoves(Board board) {
-	// ArrayList<XY> output = new ArrayList<XY>();
-	// int direction = this.getRank().getOwner().getDirection();
-	// int x = this.getXY().getX();
-	// int y = this.getXY().getY();
-	// boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y +
-	// direction) == null);
-	// if (isAbleToGoStraightForwardOneMove == true) {
-	// output.add(XY.getNewXY(x, y + direction));
-	// }
-	//
-	// boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() ==
-	// false && board.getFigure(x, y + direction) == null && board.getFigure(x,
-	// y + 2 * direction) == null);
-	// if (isAbleToGoStraightForwardUntouchedTwoMoves == true) {
-	// output.add(XY.getNewXY(x, y + 2 * direction));
-	// }
-	// // take figure
-	// ArrayList<XY> removableEnemysXY = this.getPawnPossibleAttack(board);
-	//
-	// for (XY xy : removableEnemysXY) {
-	// boolean isAbleToTakeFigure = (board.getFigure(xy) != null &&
-	// board.getFigure(xy).isEnemy(this));
-	//
-	// if (isAbleToTakeFigure == true)
-	// output.add(xy);
-	// }
-	//
-	// XY xyEnPassant = board.xyEnPassantPossible(this);
-	// if (xyEnPassant != null) {
-	// output.add(xyEnPassant);
-	// }
-	//
-	// return output;
-	// }
 }
