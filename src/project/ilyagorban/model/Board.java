@@ -15,7 +15,7 @@ public class Board {
 	}
 	
 	private Figure[][] board = new Figure[8][8];
-	private HashMap<Owner, ArrayList<XY>> xyOfSides;
+	private HashMap<Owner, HashSet<XY>> xyOfSides;
 	private HashSet<HashSet<String>> log;
 	private HashMap<Owner, XY> xyOfKings;
 	private XY startPositions;
@@ -23,7 +23,13 @@ public class Board {
 	private Figure lastMovedFigure;
 	private int numberOfMove;
 	private int numberOfFiftyRule;
+	private Figure possibleLastMovedFigure;
+	private XY possibleStartPosition;
+	private XY possibleEndPosition;
+	private ArrayList<XY> possibleMovesFrom;
+	private ArrayList<XY> possibleMovesTo;
 	private static final ArrayList<String> startGamePositions = new ArrayList<>();
+	
 	static {
 		startGamePositions.add("wra1");
 		startGamePositions.add("wnb1");
@@ -125,13 +131,13 @@ public class Board {
 		int output = CORRECT_MOVE;
 		XY origXY = fig.getXY();
 		Owner o = fig.getRank().getOwner();
-		moveWithoutTrace(fig, to);
+		move(fig, to);
 		for (XY xy : xyOfSides.get(o.oppositeOwner())) {
 			output = checkInAssessMateOrStalemate(xy);
 			if (output != CHECK_TO_CURRENT_SIDE)
 				break;
 		}
-		moveWithoutTrace(fig, origXY);
+		move(fig, origXY);
 		if (output == CHECK_TO_CURRENT_SIDE) {
 			// mate or stalemate to awaiting side
 			if (checkOutput == CORRECT_MOVE) {
@@ -156,15 +162,24 @@ public class Board {
 				output = assessMateOrStalemate(fig, to, output);
 			}
 		}
+		if (output >= CORRECT_MOVE && output < GAME_ENDINGS) {
+			//TODO could be problem with draw
+			output = correctMoveResult;
+		}
 		return output;
 	}
 	
 	public void castling(Figure king, XY to) {
+		XY kingXY = king.getXY();
 		int rookX = (to.getX() == 6) ? 7 : 0;
-		int kingY = king.getXY().getY();
+		int kingY = kingXY.getY();
 		int newRookX = (to.getX() == 6) ? 5 : 3;
+		savePossibleMove(kingXY, to);
 		move(king, to);
-		move(getFigure(rookX, kingY), newRookX, kingY);
+		Figure rook = getFigure(rookX, kingY);
+		XY newRookXY = XY.getNewXY(newRookX, kingY);
+		savePossibleMove(rook.getXY(), newRookXY);
+		move(rook, newRookXY);
 		
 	}
 	
@@ -172,9 +187,9 @@ public class Board {
 		Owner w = Owner.WHITE;
 		Owner b = Owner.BLACK;
 		Owner o = figFrom.getRank().getOwner();
-		XY origXY = new XY(figFrom.getXY());
+		XY origXY = figFrom.getXY();
 		int result = CORRECT_MOVE;
-		moveWithoutTrace(figFrom, to);
+		move(figFrom, to);
 		
 		if (to.equals(xyOfKings.get(o))) {
 			boolean isKingsNotOnNeighborSquares = Math.abs(xyOfKings.get(w).getX() - xyOfKings.get(b).getX()) > 1 && Math.abs(xyOfKings.get(w).getY() - xyOfKings.get(b).getY()) > 1;
@@ -184,7 +199,7 @@ public class Board {
 		}
 		result = check(o);
 		
-		moveWithoutTrace(figFrom, origXY);
+		move(figFrom, origXY);
 		return result;
 		
 	}
@@ -271,19 +286,22 @@ public class Board {
 	public int checkMove(XY from, XY to) {
 		Figure figFrom = getFigure(from);
 		Figure figTo = getFigure(to);
-		int output = INCORRECT_MOVE;
-		
 		boolean isEndPointEmptyOrEnemy = (figTo == null || figTo.isEnemy(figFrom));
 		if (isEndPointEmptyOrEnemy == false)
 			return OBSTACLE_ON_WAY;
 		
-		ArrayList<XY> pm = getPossibleMoves(figFrom);
-		if (pm.contains(to) == true) {
-			output = CORRECT_MOVE;
-		} else {
-			ArrayList<XY> psm = getPossibleSpecialMove(figFrom);
-			if (psm.contains(to) == true) {
-				output = figFrom.getSpecialCorrectMoveName(to);
+		int output = figFrom.getSpecialCorrectMoveName(to);
+		if (output > CORRECT_MOVE) {
+			ArrayList<XY> psm = getPossibleSpecialMove(figFrom, output);
+			if (psm.contains(to) == false) {
+				output = CORRECT_MOVE; //check if XY to exists in possibleMoves (pm)
+			}
+		}
+		
+		if (output == CORRECT_MOVE) {
+			ArrayList<XY> pm = getPossibleMoves(figFrom);
+			if (pm.contains(to) == true) {
+				output = CORRECT_MOVE;
 			} else {
 				output = INCORRECT_MOVE;
 			}
@@ -296,28 +314,12 @@ public class Board {
 		
 	}
 	
-	// TODO remove checkMove from pawn
-	// @Override
-	// public int checkMove(Board board, XY to) {
-	// int superMethod = super.checkMove(board, to);
-	// if (superMethod == CORRECT_MOVE) {
-	// boolean isReadyToBePromoted = ((to.getY() == 7 &&
-	// this.isEnemy(Owner.BLACK)) || (to.getY() == 0 &&
-	// this.isEnemy(Owner.WHITE)));
-	// if (isReadyToBePromoted) {
-	// return PAWN_PROMOTION;
-	// }
-	// if (to.equals(board.xyEnPassantPossible(this))) {
-	// return EN_PASSANT;
-	// }
-	// }
-	// return superMethod;
-	//
-	// }
-	
 	public void enPassant(Figure pawnKiller) {
 		remove(endPositions);
-		move(pawnKiller, endPositions.getX(), endPositions.getY() + pawnKiller.getRank().getOwner().getDirection());
+		//TODO savePossibleRemove(possibleEndPosition);
+		XY newXYOfPawnKiller = XY.getNewXY(endPositions.getX(), endPositions.getY() + pawnKiller.getRank().getOwner().getDirection());
+		savePossibleMove(pawnKiller.getXY(), newXYOfPawnKiller);
+		move(pawnKiller, newXYOfPawnKiller);
 	}
 	
 	public Figure[][] getBoard() {
@@ -398,108 +400,24 @@ public class Board {
 		return output;
 	}
 	
-	private ArrayList<XY> getPossibleSpecialMove(Figure figFrom) {
-		// TODO Auto-generated method stub
-		return new ArrayList<>();
+	private ArrayList<XY> getPossibleSpecialMove(Figure figFrom, int possibleOutcome) {
+		ArrayList<XY> output = new ArrayList<>();
+		if (possibleOutcome <= CORRECT_MOVE)
+			return output;
+		switch (possibleOutcome) {
+			case PAWN_PROMOTION:
+				output = getPossibleMoves(figFrom);
+				break;
+			case EN_PASSANT:
+				if (isEnPassantPossible(figFrom) == true)
+					output.add(xyEnPassantPossible(figFrom));
+				break;
+			case CASTLING:
+				output = xyCastlingPossible(figFrom);
+		}
+		return output;
+		
 	}
-	
-	// TODO remove getPM from pawn
-	// @Override
-	// public ArrayList<XY> getPossibleMoves(Board board) {
-	// ArrayList<XY> output = new ArrayList<XY>();
-	// int direction = this.getRank().getOwner().getDirection();
-	// int x = this.getXY().getX();
-	// int y = this.getXY().getY();
-	// boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y +
-	// direction) == null);
-	// if (isAbleToGoStraightForwardOneMove == true) {
-	// output.add(XY.getNewXY(x, y + direction));
-	// }
-	//
-	// boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() ==
-	// false && board.getFigure(x, y + direction) == null && board.getFigure(x,
-	// y + 2 * direction) == null);
-	// if (isAbleToGoStraightForwardUntouchedTwoMoves == true) {
-	// output.add(XY.getNewXY(x, y + 2 * direction));
-	// }
-	// // take figure
-	// ArrayList<XY> removableEnemysXY = this.getPawnPossibleAttack(board);
-	//
-	// for (XY xy : removableEnemysXY) {
-	// boolean isAbleToTakeFigure = (board.getFigure(xy) != null &&
-	// board.getFigure(xy).isEnemy(this));
-	//
-	// if (isAbleToTakeFigure == true)
-	// output.add(xy);
-	// }
-	//
-	// XY xyEnPassant = board.xyEnPassantPossible(this);
-	// if (xyEnPassant != null) {
-	// output.add(xyEnPassant);
-	// }
-	//
-	// return output;
-	// }
-	
-	// TODO change king.getPM
-	// @Override
-	// public ArrayList<XY> getPossibleMoves(Board board) {
-	// ArrayList<XY> output = super.getPossibleMoves(board);
-	// int kingX = this.getXY().getX();
-	// int kingY = this.getXY().getY();
-	//
-	// boolean isUntouchedKing = this.getRank().getIndex().equals("k") &&
-	// this.isTouched() == false;
-	// if (isUntouchedKing == true) {
-	// // left and right castling check:
-	// for (int x = 0; x <= 7; x = x + 7) {
-	// int stepsX = x - kingX;
-	// int direction = stepsX / Math.abs(stepsX);
-	// Figure rook = board.getFigure(x, kingY);
-	// if (rook != null && rook.isTouched() == false) {
-	// boolean isAbleToCastle = true;
-	// for (int i = 1; i < Math.abs(stepsX); i++) {
-	// int newX = kingX + i * direction;
-	// Figure fig = board.getFigure(newX, kingY);
-	// boolean isEmpty = (fig == null);
-	// if (isEmpty) {
-	// continue;
-	// } else {
-	// isAbleToCastle = false;
-	// break;
-	// }
-	// }
-	// if (isAbleToCastle == true)
-	// output.add(XY.getNewXY(kingX + direction * 2, kingY));
-	// }
-	// }
-	// }
-	//
-	// return output;
-	// }
-	//
-	// TODO remove pawn possible attack
-	// public ArrayList<XY> getPawnPossibleAttack(XY from, XY to) {
-	// ArrayList<XY> output = new ArrayList<>(2);
-	// int direction = this.getRank().getOwner().getDirection();
-	// if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
-	// if (this.getXY().getX() != 7) {
-	// Figure target = board.getFigure(this.getXY().getX() + 1,
-	// this.getXY().getY() + direction);
-	// boolean isRemovable = (target != null && this.isEnemy(target));
-	// if (isRemovable == true)
-	// output.add(target.getXY());
-	// }
-	// if (this.getXY().getX() != 0) {
-	// Figure target = board.getFigure(this.getXY().getX() - 1,
-	// this.getXY().getY() + direction);
-	// boolean isRemovable = (target != null && this.isEnemy(target));
-	// if (isRemovable == true)
-	// output.add(target.getXY());
-	// }
-	// }
-	// return output;
-	// }
 	
 	public XY getStartPositions() {
 		return startPositions;
@@ -509,13 +427,9 @@ public class Board {
 		return xyOfKings.get(o);
 	}
 	
-	public ArrayList<XY> getXyOfSides(Owner o) {
+	public HashSet<XY> getXyOfSides(Owner o) {
 		return xyOfSides.get(o);
 	}
-	
-	/*
-	 * need to make this check after making move
-	 */
 	
 	public boolean initializeGame() {
 		numberOfMove = 0;
@@ -524,14 +438,18 @@ public class Board {
 		return initializeGame(numberOfMove, log, numberOfFiftyRule, startGamePositions);
 	}
 	
+	/*
+	 * need to make this check after making move
+	 */
+	
 	public boolean initializeGame(int numberOfMove, HashSet<HashSet<String>> log, int numberOfFiftyRule, ArrayList<String> startGamePositions) {
 		this.numberOfMove = numberOfMove;
 		this.log = log;
 		boolean output = true;
 		xyOfKings = new HashMap<>();
 		xyOfSides = new HashMap<>();
-		xyOfSides.put(Owner.WHITE, new ArrayList<XY>());
-		xyOfSides.put(Owner.BLACK, new ArrayList<XY>());
+		xyOfSides.put(Owner.WHITE, new HashSet<XY>());
+		xyOfSides.put(Owner.BLACK, new HashSet<XY>());
 		for (String startGamePosition : startGamePositions) {
 			output = setFigureToPosition(startGamePosition);
 			if (output == false) {
@@ -543,10 +461,6 @@ public class Board {
 	}
 	
 	public boolean isEnPassantPossible(Figure p) {
-		boolean isPawnOnRightY = (p.getXY().getY() == (int) (3.5 + 0.5 * p.getRank().getOwner().getDirection()));
-		if (isPawnOnRightY == false) {
-			return false;
-		}
 		boolean isLastMovedFigurePawnAndInEnPassantLetalZone = (lastMovedFigure.getRank().getIndex().equals("p") && (Math.abs(endPositions.getY() - startPositions.getY()) == 2) && (Math.abs(endPositions.getX()
 				- p.getXY().getX()) == 1));
 		return isLastMovedFigurePawnAndInEnPassantLetalZone;
@@ -554,20 +468,9 @@ public class Board {
 	}
 	
 	public void move(Figure figFrom, int x, int y) {
-		startPositions = new XY(figFrom.getXY());
-		moveWithoutTrace(figFrom, x, y);
-		endPositions = new XY(figFrom.getXY());
-		lastMovedFigure = figFrom;
-	}
-	
-	public void move(Figure figFrom, XY to) {
-		move(figFrom, to.getX(), to.getY());
-		figFrom.setTouched(true);
-	}
-	
-	public void moveWithoutTrace(Figure figFrom, int x, int y) {
 		board[figFrom.getXY().getX()][figFrom.getXY().getY()] = null;
-		figFrom.getXY().setXY(x, y);
+		XY newXY = XY.getNewXY(x, y);
+		figFrom.setXY(newXY);
 		Owner o = figFrom.getRank().getOwner();
 		if (figFrom.getXY().equals(xyOfKings.get(o))) {
 			xyOfKings.get(o).setXY(x, y);
@@ -575,14 +478,20 @@ public class Board {
 		board[x][y] = figFrom;
 	}
 	
-	public void moveWithoutTrace(Figure figFrom, XY to) {
-		moveWithoutTrace(figFrom, to.getX(), to.getY());
-		
+	public void move(Figure figFrom, XY to) {
+		move(figFrom, to.getX(), to.getY());
 	}
 	
 	public boolean promotePawn(Figure pawn, Rank gotRank, XY to) {
 		pawn.setRank(gotRank);
 		return true;
+	}
+	
+	public void remove(int x, int y) {
+		Figure fig = board[x][y];
+		xyOfSides.get(fig.getRank().getOwner()).remove(XY.getNewXY(x, y));
+		board[x][y] = null;
+		
 	}
 	
 	/*
@@ -591,13 +500,6 @@ public class Board {
 	 * if opposite side could move without further check it's asserted that it's
 	 * not mate or stalemate so it's correct move
 	 */
-	
-	public void remove(int x, int y) {
-		Figure fig = board[x][y];
-		xyOfSides.get(fig.getRank().getOwner()).remove(fig.getXY());
-		board[x][y] = null;
-		
-	}
 	
 	public void remove(XY xy) {
 		remove(xy.getX(), xy.getY());
@@ -609,16 +511,45 @@ public class Board {
 	
 	public void saveMove() {
 		numberOfMove++;
+		startPositions = possibleStartPosition;
+		endPositions = possibleEndPosition;
+		lastMovedFigure = possibleLastMovedFigure;
+		Rank r = lastMovedFigure.getRank();
+		Owner currentOwner = r.getOwner();
+		lastMovedFigure.setTouched(true);
+		if (possibleMovesFrom != null) {
+			xyOfSides.get(currentOwner).removeAll(possibleMovesFrom);
+			xyOfSides.get(currentOwner).addAll(possibleMovesTo);
+		}
+		
 		HashSet<String> thisMove = new HashSet<>();
-		thisMove.add(getFigure(xyOfKings.get(Owner.WHITE)).toLog());
-		thisMove.add(getFigure(xyOfKings.get(Owner.BLACK)).toLog());
 		for (XY xy : xyOfSides.get(Owner.WHITE)) {
 			thisMove.add(getFigure(xy).toLog());
 		}
 		for (XY xy : xyOfSides.get(Owner.BLACK)) {
 			thisMove.add(getFigure(xy).toLog());
 		}
+		
+		possibleMovesFrom = null;
+		possibleMovesTo = null;
+		
 		log.add(thisMove);
+	}
+	
+	public void savePossibleLastMovedFigure(Figure figFrom, XY from, XY to) {
+		this.possibleLastMovedFigure = figFrom;
+		this.possibleStartPosition = from;
+		this.possibleEndPosition = to;
+		
+	}
+	
+	public void savePossibleMove(XY from, XY to) {
+		if (possibleMovesFrom == null) {
+			possibleMovesFrom = new ArrayList<>();
+			possibleMovesTo = new ArrayList<>();
+		}
+		possibleMovesFrom.add(from);
+		possibleMovesTo.add(to);
 	}
 	
 	public void setFigureToPosition(Figure fig) {
@@ -643,6 +574,34 @@ public class Board {
 		}
 		setFigureToPosition(fig);
 		return true;
+	}
+	
+	private ArrayList<XY> xyCastlingPossible(Figure figFrom) {
+		ArrayList<XY> output = new ArrayList<>();
+		int kingX = figFrom.getXY().getX();
+		int kingY = figFrom.getXY().getY();
+		for (int x : new int[] { 0, 7 }) {
+			int stepsX = x - kingX;
+			int direction = stepsX / Math.abs(stepsX);
+			Figure rook = getFigure(x, kingY);
+			if (rook != null && rook.isTouched() == false) {
+				boolean isAbleToCastle = true;
+				for (int i = 1; i < Math.abs(stepsX); i++) {
+					int newX = kingX + i * direction;
+					Figure fig = getFigure(newX, kingY);
+					boolean isEmpty = (fig == null);
+					if (isEmpty) {
+						continue;
+					} else {
+						isAbleToCastle = false;
+						break;
+					}
+				}
+				if (isAbleToCastle == true)
+					output.add(XY.getNewXY(kingX + direction * 2, kingY));
+			}
+		}
+		return output;
 	}
 	
 	public XY xyEnPassantPossible(Figure p) {

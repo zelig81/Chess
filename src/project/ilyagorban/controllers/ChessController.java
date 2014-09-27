@@ -42,6 +42,9 @@ public class ChessController {
 				}
 			} else if (returnMessage >= CORRECT_MOVE) {
 				switch (returnMessage) {
+					case EN_PASSANT:
+						cv.getMessageToView("Made en-passant");
+						break;
 					case CHECK_TO_AWAITING_SIDE:
 						if (currentOwner == Owner.BLACK) {
 							cv.getMessageToView("White make check");

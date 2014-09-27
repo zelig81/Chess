@@ -43,15 +43,18 @@ public class ChessModel {
 			checkMove = board.checkMove(from, to);
 			
 			if (checkMove >= CORRECT_MOVE) {
+				board.savePossibleLastMovedFigure(figFrom, from, to);
 				if (figFrom.getRank().getIndex().equals("p")) { // pawn move
 					board.resetNumberOfFiftyRule();
 				}
 				if (checkMove == CORRECT_MOVE) {
-					if (board.getFigure(to) != null) {
+					Figure figTo = board.getFigure(to);
+					if (figTo != null) {
 						board.remove(to);
 						board.resetNumberOfFiftyRule();
 					}
 					board.move(figFrom, to);
+					board.savePossibleMove(from, to);
 				} else if (checkMove == CASTLING) {
 					board.castling(figFrom, to);
 				} else if (checkMove == EN_PASSANT) {
