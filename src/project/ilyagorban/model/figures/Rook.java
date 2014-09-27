@@ -11,6 +11,7 @@ public class Rook extends Figure {
 		setMoveDirections(moveDirectionsOfRook);
 		setKillDirections(moveDirectionsOfRook);
 		setMoveLen(8);
+		setKillLen(8);
 	}
 	
 }

@@ -11,6 +11,7 @@ public class Bishop extends Figure {
 		setMoveDirections(moveDirectionsOfBishop);
 		setKillDirections(moveDirectionsOfBishop);
 		setMoveLen(8);
+		setKillLen(8);
 	}
 	
 }

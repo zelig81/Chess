@@ -11,6 +11,7 @@ public class Queen extends Figure {
 		setMoveDirections(moveDirectionsOfQueen);
 		setKillDirections(moveDirectionsOfQueen);
 		setMoveLen(8);
+		setKillLen(8);
 	}
 	
 }

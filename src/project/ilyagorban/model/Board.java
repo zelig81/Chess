@@ -180,32 +180,79 @@ public class Board {
 			boolean isKingsNotOnNeighborSquares = Math.abs(xyOfKings.get(w).getX() - xyOfKings.get(b).getX()) > 1 && Math.abs(xyOfKings.get(w).getY() - xyOfKings.get(b).getY()) > 1;
 			if (isKingsNotOnNeighborSquares == false) {
 				result = INCORRECT_MOVE;
-			} else {
-				result = checkFromKingsPointOfView(o);
 			}
-		} else {
-			result = checkFromKingsPointOfView(o);
 		}
+		result = check(o);
 		
 		moveWithoutTrace(figFrom, origXY);
 		return result;
 		
 	}
 	
-	public int checkFromKingsPointOfView(Owner o) {
-		King currentKing = (King) getFigure(xyOfKings.get(o));
-		boolean isUnderAttack = currentKing.isUnderAttack(this);
-		if (isUnderAttack == true) {
-			return CHECK_TO_CURRENT_SIDE;
-		}
-		Owner oo = o.oppositeOwner();
-		King oppositeKing = (King) getFigure(xyOfKings.get(oo));
-		isUnderAttack = oppositeKing.isUnderAttack(this);
-		if (isUnderAttack == true) {
-			return CHECK_TO_AWAITING_SIDE;
-		}
-		return CORRECT_MOVE;
-		
+	// TODO move isUnderAttack to board.check() foreach xy on opposite side isUnderAttack(xy, currentKingXY)!!!
+	// public boolean isUnderAttack(Board board) {
+	// boolean output = false;
+	// for (int i = 0; i < 3; i++) {
+	// if (output == true)
+	// break;
+	// this.setMoveDirections(allKillDirections[i]);
+	// this.setMoveLen(allMoveLen[i]);
+	// ArrayList<XY> pm = board.getPossibleMoves(this);
+	// if (pm == null) {
+	// System.out.println(this.toLog() + allKillDirections[i].toString());
+	// break;
+	// }
+	// if (pm.size() != 0)
+	// for (XY xy : pm) {
+	// Figure fig = board.getFigure(xy);
+	// if (fig != null) {
+	// for (String s : allKillerIndex[i]) {
+	// boolean isThreat = fig.isEnemy(this) &&
+	// fig.getRank().getIndex().equals(s);
+	// if (isThreat) {
+	// output = true;
+	// break;
+	// }
+	// }
+	// }
+	// }
+	// }
+	// if (output == false) {
+	// ArrayList<XY> ppa = board.getPawnPossibleAttack(null, null);
+	// for (XY xy : ppa) {
+	// Figure fig = board.getFigure(xy);
+	// if (this.isEnemy(fig) && fig.getRank().getIndex() == "p") {
+	// output = true;
+	// break;
+	// }
+	// }
+	// }
+	// this.setMoveDirections(moveDirectionsOfQueen);
+	// this.setMoveLen(1);
+	// return output;
+	//
+	// }
+	
+	//TODO refactor checkFromKingsPointOfView 
+	//	public int checkFromKingsPointOfView(Owner o) {
+	//		King currentKing = (King) getFigure(xyOfKings.get(o));
+	//		boolean isUnderAttack = currentKing.isUnderAttack(this);
+	//		if (isUnderAttack == true) {
+	//			return CHECK_TO_CURRENT_SIDE;
+	//		}
+	//		Owner oo = o.oppositeOwner();
+	//		King oppositeKing = (King) getFigure(xyOfKings.get(oo));
+	//		isUnderAttack = oppositeKing.isUnderAttack(this);
+	//		if (isUnderAttack == true) {
+	//			return CHECK_TO_AWAITING_SIDE;
+	//		}
+	//		return CORRECT_MOVE;
+	//		
+	//	}
+	
+	private int check(Owner o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 	protected int checkInAssessMateOrStalemate(XY xy) {
@@ -222,8 +269,8 @@ public class Board {
 	}
 	
 	public int checkMove(XY from, XY to) {
-		Figure figTo = getFigure(to);
 		Figure figFrom = getFigure(from);
+		Figure figTo = getFigure(to);
 		int output = INCORRECT_MOVE;
 		
 		boolean isEndPointEmptyOrEnemy = (figTo == null || figTo.isEnemy(figFrom));
@@ -248,6 +295,25 @@ public class Board {
 		return output;
 		
 	}
+	
+	// TODO remove checkMove from pawn
+	// @Override
+	// public int checkMove(Board board, XY to) {
+	// int superMethod = super.checkMove(board, to);
+	// if (superMethod == CORRECT_MOVE) {
+	// boolean isReadyToBePromoted = ((to.getY() == 7 &&
+	// this.isEnemy(Owner.BLACK)) || (to.getY() == 0 &&
+	// this.isEnemy(Owner.WHITE)));
+	// if (isReadyToBePromoted) {
+	// return PAWN_PROMOTION;
+	// }
+	// if (to.equals(board.xyEnPassantPossible(this))) {
+	// return EN_PASSANT;
+	// }
+	// }
+	// return superMethod;
+	//
+	// }
 	
 	public void enPassant(Figure pawnKiller) {
 		remove(endPositions);
@@ -285,37 +351,13 @@ public class Board {
 		return lastMovedFigure;
 	}
 	
-	public ArrayList<XY> getPawnPossibleAttack(XY from, XY to) {
-		// TODO remove pawn possible attack
-		// ArrayList<XY> output = new ArrayList<>(2);
-		// int direction = this.getRank().getOwner().getDirection();
-		// if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
-		// if (this.getXY().getX() != 7) {
-		// Figure target = board.getFigure(this.getXY().getX() + 1,
-		// this.getXY().getY() + direction);
-		// boolean isRemovable = (target != null && this.isEnemy(target));
-		// if (isRemovable == true)
-		// output.add(target.getXY());
-		// }
-		// if (this.getXY().getX() != 0) {
-		// Figure target = board.getFigure(this.getXY().getX() - 1,
-		// this.getXY().getY() + direction);
-		// boolean isRemovable = (target != null && this.isEnemy(target));
-		// if (isRemovable == true)
-		// output.add(target.getXY());
-		// }
-		// }
-		// return output;
-		return null;
-	}
-	
-	private void getPossibleKillOrMoveForOneDirection(ArrayList<XY> list, Figure figFrom, int[] dir, boolean isKillAction) {
+	private void getPossibleKillOrMoveForOneDirection(ArrayList<XY> list, Figure figFrom, int[] dir, int length, boolean isKillAction) {
 		boolean isPawn = figFrom instanceof Pawn;
 		int thisX = figFrom.getXY().getX();
 		int thisY = figFrom.getXY().getY();
 		int i = 1;
 		while (true) {
-			if (i > figFrom.getMoveLen())
+			if (i > length)
 				break;
 			int newX = thisX + dir[0] * i;
 			int newY = thisY + dir[1] * i;
@@ -346,11 +388,11 @@ public class Board {
 		ArrayList<XY> output = new ArrayList<>();
 		// cycle of directions
 		for (int[] dir : figFrom.getKillDirections()) {
-			getPossibleKillOrMoveForOneDirection(output, figFrom, dir, true);
+			getPossibleKillOrMoveForOneDirection(output, figFrom, dir, figFrom.getKillLen(), true);
 		}
 		if (figFrom instanceof Pawn) {
 			for (int[] dir : figFrom.getMoveDirections()) {
-				getPossibleKillOrMoveForOneDirection(output, figFrom, dir, false);
+				getPossibleKillOrMoveForOneDirection(output, figFrom, dir, figFrom.getMoveLen(), false);
 			}
 		}
 		return output;
@@ -360,6 +402,104 @@ public class Board {
 		// TODO Auto-generated method stub
 		return new ArrayList<>();
 	}
+	
+	// TODO remove getPM from pawn
+	// @Override
+	// public ArrayList<XY> getPossibleMoves(Board board) {
+	// ArrayList<XY> output = new ArrayList<XY>();
+	// int direction = this.getRank().getOwner().getDirection();
+	// int x = this.getXY().getX();
+	// int y = this.getXY().getY();
+	// boolean isAbleToGoStraightForwardOneMove = (board.getFigure(x, y +
+	// direction) == null);
+	// if (isAbleToGoStraightForwardOneMove == true) {
+	// output.add(XY.getNewXY(x, y + direction));
+	// }
+	//
+	// boolean isAbleToGoStraightForwardUntouchedTwoMoves = (this.isTouched() ==
+	// false && board.getFigure(x, y + direction) == null && board.getFigure(x,
+	// y + 2 * direction) == null);
+	// if (isAbleToGoStraightForwardUntouchedTwoMoves == true) {
+	// output.add(XY.getNewXY(x, y + 2 * direction));
+	// }
+	// // take figure
+	// ArrayList<XY> removableEnemysXY = this.getPawnPossibleAttack(board);
+	//
+	// for (XY xy : removableEnemysXY) {
+	// boolean isAbleToTakeFigure = (board.getFigure(xy) != null &&
+	// board.getFigure(xy).isEnemy(this));
+	//
+	// if (isAbleToTakeFigure == true)
+	// output.add(xy);
+	// }
+	//
+	// XY xyEnPassant = board.xyEnPassantPossible(this);
+	// if (xyEnPassant != null) {
+	// output.add(xyEnPassant);
+	// }
+	//
+	// return output;
+	// }
+	
+	// TODO change king.getPM
+	// @Override
+	// public ArrayList<XY> getPossibleMoves(Board board) {
+	// ArrayList<XY> output = super.getPossibleMoves(board);
+	// int kingX = this.getXY().getX();
+	// int kingY = this.getXY().getY();
+	//
+	// boolean isUntouchedKing = this.getRank().getIndex().equals("k") &&
+	// this.isTouched() == false;
+	// if (isUntouchedKing == true) {
+	// // left and right castling check:
+	// for (int x = 0; x <= 7; x = x + 7) {
+	// int stepsX = x - kingX;
+	// int direction = stepsX / Math.abs(stepsX);
+	// Figure rook = board.getFigure(x, kingY);
+	// if (rook != null && rook.isTouched() == false) {
+	// boolean isAbleToCastle = true;
+	// for (int i = 1; i < Math.abs(stepsX); i++) {
+	// int newX = kingX + i * direction;
+	// Figure fig = board.getFigure(newX, kingY);
+	// boolean isEmpty = (fig == null);
+	// if (isEmpty) {
+	// continue;
+	// } else {
+	// isAbleToCastle = false;
+	// break;
+	// }
+	// }
+	// if (isAbleToCastle == true)
+	// output.add(XY.getNewXY(kingX + direction * 2, kingY));
+	// }
+	// }
+	// }
+	//
+	// return output;
+	// }
+	//
+	// TODO remove pawn possible attack
+	// public ArrayList<XY> getPawnPossibleAttack(XY from, XY to) {
+	// ArrayList<XY> output = new ArrayList<>(2);
+	// int direction = this.getRank().getOwner().getDirection();
+	// if (this.getXY().getY() > 0 && this.getXY().getY() < 7) {
+	// if (this.getXY().getX() != 7) {
+	// Figure target = board.getFigure(this.getXY().getX() + 1,
+	// this.getXY().getY() + direction);
+	// boolean isRemovable = (target != null && this.isEnemy(target));
+	// if (isRemovable == true)
+	// output.add(target.getXY());
+	// }
+	// if (this.getXY().getX() != 0) {
+	// Figure target = board.getFigure(this.getXY().getX() - 1,
+	// this.getXY().getY() + direction);
+	// boolean isRemovable = (target != null && this.isEnemy(target));
+	// if (isRemovable == true)
+	// output.add(target.getXY());
+	// }
+	// }
+	// return output;
+	// }
 	
 	public XY getStartPositions() {
 		return startPositions;

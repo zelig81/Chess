@@ -11,6 +11,7 @@ public class Knight extends Figure {
 		setMoveDirections(moveDirectionsOfKnight);
 		setKillDirections(moveDirectionsOfKnight);
 		setMoveLen(1);
+		setKillLen(1);
 	}
 	
 }
